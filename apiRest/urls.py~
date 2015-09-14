@@ -1,0 +1,6 @@
+from django.conf.urls import patterns, include, url
+
+urlpatterns = patterns('',
+    url(r'^planning/$', views.PlanningList.as_view()),
+    url(r'^planning/(?P<id>[0-9a-z]+)/$', views.PlanningDetail.as_view()),
+)

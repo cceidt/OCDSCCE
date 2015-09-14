@@ -1,0 +1,11 @@
+from django.shortcuts import render
+from rest_framework_mongoengine.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
+from apiRest.models import *
+
+class PlanningList(ListCreateAPIView):
+    queryset = Planning.objects.all()
+    serializer_class = PlanningSerializer
+
+class PlanningDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Planning.objects.all()
+    serializer_class = PlanningSerializer

@@ -1,0 +1,9 @@
+from apiRest.models import Planning
+from rest_framework_mongoengine import serializers
+
+class PlanningSerializer(MongoEngineModelSerializer):
+    class Meta:
+        model = Planning
+        depth = 2
+
+
