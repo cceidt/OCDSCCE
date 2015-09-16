@@ -25,7 +25,7 @@ class Classification(EmbeddedDocument):
 
 """Clase Item"""
 class Item(EmbeddedDocument):
-     id_item = DictField(primary_key=True)
+     id_item = StringField(max_length=50)
      description = StringField(max_length=50)
      additionalClassifications = ListField(EmbeddedDocumentField(Classification))
      quantity = StringField(max_length=50)
@@ -86,7 +86,7 @@ class Milestone(EmbeddedDocument):
 """Clase Organization"""
 class Organization(EmbeddedDocument):
      identifier = EmbeddedDocumentField(Identifier)
-     additionalIdentifiers = ListField(EmbeddedDocumentField(Identifier))
+     #additionalIdentifiers = ListField(EmbeddedDocumentField(Identifier))
      name = StringField(max_length=50)
      address = EmbeddedDocumentField(Address)
      contactPoint = EmbeddedDocumentField(ContactPoint)
@@ -151,7 +151,7 @@ class Planning(EmbeddedDocument):
 
 """Clase Award"""
 class Awards(Document):
-     id_award = StringField(max_length=50)
+     id_award = IntField()
      title = StringField(max_length=50)
      description = StringField(max_length=50)
      status = StringField(max_length=50)
@@ -205,7 +205,7 @@ class Contracts(Document):
 
 """Clase Releases"""
 class Releases(Document):
-     #ocid = StringField(max_length=50)
+     num_constancia = StringField(max_length=50)
      id_release = StringField(max_length=50)
      date = DateTimeField()
      tag = ListField()
