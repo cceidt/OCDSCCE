@@ -219,10 +219,11 @@ class Releases(Document):
 
 
 """Clase Package Metadata"""
-class PackageRelease(Document):
+class Packagemetadata(Document):
     uri = URLField()
     publishedDate = DateTimeField()
     releases = ListField(ReferenceField(Releases))
-    publisher = StringField(max_length=50)
-    license = URLField()
-    publicationPolicy = URLField()
+    publisher = EmbeddedDocumentField(Organization)
+    num_constancia = StringField(max_length=50)
+    #license = URLField()
+    #publicationPolicy = URLField()

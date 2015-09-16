@@ -131,3 +131,14 @@ class ReleasesDateList(generics.ListAPIView):
 class PlanningList(generics.ListAPIView):
     queryset = Releases.objects.filter(planning__exists=True)
     serializer_class = PlanningSerializer
+
+class PackageList(generics.ListAPIView):
+    queryset = Packagemetadata.objects.all()
+    serializer_class = PackagemetadataSerializer
+
+class PackageNumConstList(generics.ListAPIView):
+    serializer_class = PackagemetadataSerializer
+
+    def get_queryset(self):
+        num_constancia = self.kwargs['num_constancia']
+        return Packagemetadata.objects.filter(num_constancia=num_constancia)

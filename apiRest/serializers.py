@@ -82,3 +82,12 @@ class BudgetSerializer(DocumentSerializer):
     class Meta:
         model = Budget
         fields = ('source', 'id_budget','description', 'amount','uri')
+
+class PackagemetadataSerializer(DocumentSerializer):
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+
+    class Meta:
+        model =Packagemetadata
+        fields = ('num_constancia','uri', 'publishedDate','releases', 'publisher')

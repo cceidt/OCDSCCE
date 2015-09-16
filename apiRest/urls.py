@@ -27,5 +27,7 @@ urlpatterns = patterns('',
      url(r'^releases/buyer/identifier/(?P<identifier>[0-9]+-[0-9]+)/$', views.ReleasesBuyerIdenNameList.as_view()),
      url(r'^releases/tag/(?P<tag>[A-Za-z]+)/$', views.ReleasesTagNameList.as_view()), 
      url(r'^releases/date/start/(?P<inicio>[0-9]+-[0-9]+-[0-9]+)/finish/(?P<fin>[0-9]+-[0-9]+-[0-9]+)/$', views.ReleasesDateList.as_view()),    
+     url(r'^package/$', views.PackageList.as_view()),
+     url(r'^package/constancia/(?P<num_constancia>[0-9]+-[0-9]+-[0-9]+)/$', views.PackageNumConstList.as_view(), name='package-num-constancia'),
      #url(r'^releases/tenderid/(?P<tender>[0-9]+-[0-9]+-[0-9]+)/$', views.ReleasesTenderList.as_view(), name='releases-tenders'),
 )
