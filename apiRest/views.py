@@ -1,144 +1,107 @@
-from django.shortcuts import render, get_object_or_404
 from apiRest.models import *
 from apiRest.serializers import *
 from rest_framework_mongoengine import generics
-from rest_framework import viewsets
 from rest_framework import filters
-from django.db.models import Q
 from datetime import datetime
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
-
 
 class TendersList(generics.ListAPIView):
-    queryset = Tenders.objects.all()
-    serializer_class = TendersSerializer
-
-
-class TendersIdList(generics.ListAPIView):
     serializer_class = TendersSerializer
 
     def get_queryset(self):
-        id_tender = self.kwargs['id_tender']
-        return Tenders.objects.filter(id_tender=id_tender)
-
-class TendersStatusList(generics.ListAPIView):
-    serializer_class = TendersSerializer
-
-    def get_queryset(self):
-        status = self.kwargs['status']
-        return Tenders.objects.filter(status=status)
-
-class TendersTitleList(generics.ListAPIView):
-    serializer_class = TendersSerializer
-
-    def get_queryset(self):
-        title = self.kwargs['title']
-        return Tenders.objects.filter(title__contains=title)
-
-class TendersItemsList(generics.ListAPIView):
-    serializer_class = TendersSerializer
-
-    def get_queryset(self):
-        items = self.kwargs['items']
-        return Tenders.objects.filter(items__id_item=items)
-
-class TendersValueList(generics.ListAPIView):
-    serializer_class = TendersSerializer
-
-    def get_queryset(self):
-        value = self.kwargs['value']
-        return Tenders.objects.filter(value__amount=value)
+        queryset = Tenders.objects.all()
+        a = ['status','title', 'items', 'value']
+        filtro = Tenders.objects.all()
+        if 'id_tender' in self.request.GET:
+            id_tender = self.request.GET.get('id_tender')
+            filtro = Tenders.objects.filter(id_tender=id_tender)
+            return filtro
+        else:
+            for i in a:
+                if i in self.request.GET:
+                    if i == 'status':
+                        status = self.request.GET.get('status')
+                        filtro = filtro.filter(status=status)
+                    if i == 'title':
+                        title = self.request.GET.get('title')
+                        filtro = filtro.filter(title__contains=title)
+                    if i == 'items':
+                        items = self.request.GET.get('items')
+                        filtro = filtro.filter(items__id_item=items)
+                    if i == 'value':
+                        value = self.request.GET.get('value')
+                        filtro = filtro.filter(value__amount=value)
+                    else:
+                        pass
+                else:
+                    pass
+            return filtro
 
 class AwardsList(generics.ListAPIView):
-    queryset = Awards.objects.all()
     serializer_class = AwardsSerializer
-
-class AwardsIdList(generics.ListAPIView):
-    serializer_class = AwardsSerializer
-
     def get_queryset(self):
-        id_award = self.kwargs['id_award']
-        return Awards.objects.filter(id_award=id_award)
+        queryset = Awards.objects.all()
+        if 'id_award' in self.request.GET:
+            id_award = self.request.GET.get('id_award')
+            return Awards.objects.filter(id_award=id_award)
+        else:
+            return Awards.objects.all()    
 
 class ContractsList(generics.ListAPIView):
-    queryset = Contracts.objects.all()
     serializer_class = ContractsSerializer
-
-class ContractsIdList(generics.ListAPIView):
-    serializer_class = ContractsSerializer
-
     def get_queryset(self):
-        id_contract = self.kwargs['id_contract']
-        return Contracts.objects.filter(id_contract=id_contract)
+        queryset = Contracts.objects.all()
+        if 'id_contract' in self.request.GET:
+            id_contract = self.request.GET.get('id_contract')
+            return Contracts.objects.filter(id_contract=id_contract)
+        else:
+            return Contracts.objects.all() 
+
 
 class ReleasesList(generics.ListAPIView):
-    queryset = Releases.objects.all()
     serializer_class = ReleasesSerializer
 
-class ReleasesNumConstList(generics.ListAPIView):
-    serializer_class = ReleasesSerializer
-
-    def get_queryset(self):
-        id_release = self.kwargs['id_release']
-        return Releases.objects.filter(id_release=id_release)
-
-class ReleasesBuyerNameList(generics.ListAPIView):
-    serializer_class = ReleasesSerializer
-
-    def get_queryset(self):
-        name = self.kwargs['name']
-        return Releases.objects.filter(buyer__identifier__legalName__contains=name)
-
-class ReleasesBuyerIdenNameList(generics.ListAPIView):
-    serializer_class = ReleasesSerializer
-
-    def get_queryset(self):
-        identifier = self.kwargs['identifier']
-        return Releases.objects.filter(buyer__identifier__id_ident__contains=identifier)
-
-class ReleasesTagNameList(generics.ListAPIView):
-    serializer_class = ReleasesSerializer
-
-    def get_queryset(self):
-        tag = self.kwargs['tag']
-        return Releases.objects.filter(tag__contains=tag)
-
-class ReleasesDateList(generics.ListAPIView):
-    serializer_class = ReleasesSerializer
-
-    def get_queryset(self):
-        inicio = datetime.strptime((self.kwargs['inicio']),'%Y-%m-%d')
-        fin = datetime.strptime((self.kwargs['fin']),'%Y-%m-%d')
-        return Releases.objects.filter(date__gte=inicio, date__lte=fin)
-
-# class ReleasesTenderList(generics.ListAPIView):
-#     serializer_class = ReleasesSerializer
-
-#     def get_queryset(self):
-#         """
-#         This view should return a list of all the purchases for
-#         the user as determined by the username portion of the URL.
-#         """
-#         tender = self.kwargs['tender']
-#         ref_tender = Tenders.objects.get(id_tender=tender) 
-#         print ref_tender.id
-#         Prueba = Releases.objects.filter(tender=ref_tender.id)
-#         print Prueba
-#         return Releases.objects.filter(tender=ref_tender.id)
+    def get_queryset(self):     
+        queryset = Releases.objects.all()
+        a = ['name','identifier', 'tag', 'start', 'finish']
+        filtro = Releases.objects.all()
+        if 'id_release' in self.request.GET:
+            id_release = self.request.GET.get('id_release')
+            filtro = Releases.objects.filter(id_release=id_release)
+            return filtro
+        else:
+            for i in a:
+                if i in self.request.GET:
+                    if i == 'name':
+                        name = self.request.GET.get('name')
+                        filtro = filtro.filter(buyer__identifier__legalName__contains=name)
+                    if i == 'identifier':
+                        identifier = self.request.GET.get('identifier')
+                        filtro = filtro.filter(buyer__identifier__id_ident__contains=identifier)
+                    if i == 'tag':
+                        tag = self.request.GET.get('tag')
+                        filtro = filtro.filter(tag__contains=tag)
+                    if i == 'start':
+                        start = datetime.strptime((self.request.GET.get('start')),'%Y-%m-%d')
+                        filtro = filtro.filter(date__gte=start)
+                    if i == 'finish':
+                        finish = datetime.strptime((self.request.GET.get('finish')),'%Y-%m-%d')
+                        filtro = filtro.filter(date__lte=finish)
+                    else:
+                        pass
+                else:
+                    pass
+            return filtro
 
 class PlanningList(generics.ListAPIView):
     queryset = Releases.objects.filter(planning__exists=True)
     serializer_class = PlanningSerializer
 
 class PackageList(generics.ListAPIView):
-    queryset = Packagemetadata.objects.all()
     serializer_class = PackagemetadataSerializer
-
-class PackageNumConstList(generics.ListAPIView):
-    serializer_class = PackagemetadataSerializer
-
     def get_queryset(self):
-        num_constancia = self.kwargs['num_constancia']
-        return Packagemetadata.objects.filter(num_constancia=num_constancia)
+        queryset = Packagemetadata.objects.all()
+        if 'num_constancia' in self.request.GET:
+            num_constancia = self.request.GET.get('num_constancia')
+            return Packagemetadata.objects.filter(num_constancia=num_constancia)
+        else:
+            return Packagemetadata.objects.all() 
