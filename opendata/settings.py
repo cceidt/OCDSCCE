@@ -180,8 +180,12 @@ LOGGING = {
             'level': 'DEBUG',
         },
         'apiRest.views': {
-            'handlers': ['console', 'logfile','warninglogfile'],
+            'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
+        },
+        'apiRest.views': {
+            'handlers': ['console', 'warninglogfile'],
+            'level': 'WARN',
         },
     }
 }
