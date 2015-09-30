@@ -5,6 +5,7 @@ from rest_framework_mongoengine import generics
 from rest_framework import filters
 from datetime import datetime
 import logging
+from rest_framework.exceptions import NotFound
 
 log = logging.getLogger(__name__)
 
@@ -21,12 +22,12 @@ class TendersList(generics.ListAPIView):
             log.debug("Parametro de busqueda de tender, id_tender: "+ unicode(id_tender))
             return filtro
         else:
-            for i in a:
-                if i in self.request.GET:
+            for i in self.request.GET:
+                if i in a:
                     if i == 'status':
-                        status = self.request.GET.get('status')
-                        filtro = filtro.filter(status=status)
-                        log.debug("Parametro de busqueda de tender, status: "+ unicode(status))
+                        statust = self.request.GET.get('status')
+                        filtro = filtro.filter(status=statust)
+                        log.debug("Parametro de busqueda de tender, status: "+ unicode(statust))
                     if i == 'title':
                         title = self.request.GET.get('title')
                         filtro = filtro.filter(title__contains=title)
@@ -42,7 +43,8 @@ class TendersList(generics.ListAPIView):
                     else:
                         pass
                 else:
-                    pass
+                    log.warn('-'+ str(i)+'- parameter was not found in Tenders.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                    raise NotFound('-'+ str(i)+'- parameter was not found in Tenders.')
             log.debug("URL busqueda de Tenders: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
             return filtro
 
@@ -50,27 +52,37 @@ class AwardsList(generics.ListAPIView):
     serializer_class = AwardsSerializer
     def get_queryset(self):
         queryset = Awards.objects.all()
-        if 'id_award' in self.request.GET:
-            id_award = self.request.GET.get('id_award')
-            log.debug("Parametro de busqueda de Awards, id_award: "+ unicode(id_award))
-            log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
-            return Awards.objects.filter(id_award=id_award)
-        else:
-            log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
-            return Awards.objects.all()    
+        a = ['id_award']
+        filtro = Awards.objects.all()
+        for i in self.request.GET:
+            if i in a:
+                id_award = self.request.GET.get('id_award')
+                filtro =  filtro.filter(id_award=id_award)
+                log.debug("Parametro de busqueda de Awards, id_award: "+ unicode(id_award))
+                log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+            else:
+                log.warn('-'+ str(i)+'- parameter was not found in Awards.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                raise NotFound('-'+ str(i)+'- parameter was not found in Awards.')
+        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+        return filtro    
 
 class ContractsList(generics.ListAPIView):
     serializer_class = ContractsSerializer
     def get_queryset(self):
         queryset = Contracts.objects.all()
-        if 'id_contract' in self.request.GET:
-            id_contract = self.request.GET.get('id_contract')
-            log.debug("Parametro de busqueda de Contracts, id_contract: "+ unicode(id_contract))
-            log.debug("URL busqueda de Contracts: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
-            return Contracts.objects.filter(id_contract=id_contract)
-        else:
-            log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
-            return Contracts.objects.all() 
+        a = ['id_contract']
+        filtro = Contracts.objects.all()
+        for i in self.request.GET:
+            if i in a:
+                id_contract = self.request.GET.get('id_contract')
+                filtro =  filtro.filter(id_contract=id_contract)
+                log.debug("Parametro de busqueda de Awards, id_award: "+ unicode(id_contract))
+                log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+            else:
+                log.warn('-'+ str(i)+'- parameter was not found in Contracts.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                raise NotFound('-'+ str(i)+'- parameter was not found in Contracts.')
+        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+        return filtro    
 
 
 class ReleasesList(generics.ListAPIView):
@@ -86,8 +98,8 @@ class ReleasesList(generics.ListAPIView):
             log.debug("Parametro de busqueda de release, id_release: "+ unicode(id_release))            
             return filtro
         else:
-            for i in a:
-                if i in self.request.GET:
+            for i in self.request.GET:
+                if i in a:
                     if i == 'name':
                         name = self.request.GET.get('name')
                         filtro = filtro.filter(buyer__identifier__legalName__contains=name)
@@ -111,7 +123,8 @@ class ReleasesList(generics.ListAPIView):
                     else:
                         pass
                 else:
-                    pass
+                    log.warn('-'+ str(i)+'- parameter was not found in Releases.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                    raise NotFound('-'+ str(i)+'- parameter was not found in Releases.')
             log.debug("URL busqueda de Releases: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
             return filtro
 
@@ -119,19 +132,28 @@ class PlanningList(generics.ListAPIView):
     serializer_class = PlanningSerializer
     def get_queryset(self):
         queryset = Releases.objects.filter(planning__exists=True)
-        log.debug("URL busqueda de Planning: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+        for i in self.request.GET:
+            if self.request.GET is None:
+                log.debug("URL busqueda de Planning: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+            else:
+                log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
         return queryset
 
 class PackageList(generics.ListAPIView):
     serializer_class = PackagemetadataSerializer
     def get_queryset(self):
         queryset = Packagemetadata.objects.all()
-        if 'num_constancia' in self.request.GET:
-            num_constancia = self.request.GET.get('num_constancia')
-            log.debug("Busqueda de Package Metadata")
-            log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
-            return Packagemetadata.objects.filter(num_constancia=num_constancia)
-        else:
-            log.debug("Busqueda de Package Metadata")
-            log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
-            return Packagemetadata.objects.all() 
+        a = ['num_constancia']
+        filtro = Packagemetadata.objects.all()
+        for i in self.request.GET:
+            if i in a:
+                num_constancia = self.request.GET.get('num_constancia')
+                filtro =  filtro.filter(num_constancia=num_constancia)
+                log.debug("Parametro de busqueda de Packagemetadata, num_constancia: "+ unicode(num_constancia))
+                log.debug("URL busqueda de Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+            else:
+                log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
+        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+        return filtro

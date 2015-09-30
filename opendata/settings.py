@@ -145,6 +145,14 @@ LOGGING = {
             'backupCount': 2,
             'formatter': 'standard',
         },
+        'warninglogfile': {
+            'level':'WARN',
+            'class':'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR + "/ocds.log",
+            'maxBytes': 50000,
+            'backupCount': 2,
+            'formatter': 'standard',
+        },
         'console':{
             'level':'INFO',
             'class':'logging.StreamHandler',
@@ -172,7 +180,7 @@ LOGGING = {
             'level': 'DEBUG',
         },
         'apiRest.views': {
-            'handlers': ['console', 'logfile'],
+            'handlers': ['console', 'logfile','warninglogfile'],
             'level': 'DEBUG',
         },
     }
