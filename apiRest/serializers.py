@@ -1,6 +1,8 @@
 from apiRest.models import *
 from django import forms
 from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
+from  rest_framework.serializers import ModelSerializer
+from django.contrib.auth.models import User
 
 class TendersSerializer(DocumentSerializer):
 

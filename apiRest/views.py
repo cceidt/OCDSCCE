@@ -6,12 +6,15 @@ from rest_framework import filters
 from datetime import datetime
 import logging
 from rest_framework.exceptions import NotFound
+import socket
+from django.contrib.auth.decorators import login_required
 
 log = logging.getLogger(__name__)
 
 class TendersList(generics.ListAPIView):
     serializer_class = TendersSerializer
 
+    
     def get_queryset(self):
         queryset = Tenders.objects.all()
         a = ['status','title', 'items', 'value']
@@ -43,9 +46,9 @@ class TendersList(generics.ListAPIView):
                     else:
                         pass
                 else:
-                    log.warn('-'+ str(i)+'- parameter was not found in Tenders.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                    log.warn('-'+ str(i)+'- parameter was not found in Tenders.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
                     raise NotFound('-'+ str(i)+'- parameter was not found in Tenders.')
-            log.debug("URL busqueda de Tenders: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+            log.debug("URL busqueda de Tenders: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
             return filtro
 
 class AwardsList(generics.ListAPIView):
@@ -59,11 +62,11 @@ class AwardsList(generics.ListAPIView):
                 id_award = self.request.GET.get('id_award')
                 filtro =  filtro.filter(id_award=id_award)
                 log.debug("Parametro de busqueda de Awards, id_award: "+ unicode(id_award))
-                log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
             else:
-                log.warn('-'+ str(i)+'- parameter was not found in Awards.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.warn('-'+ str(i)+'- parameter was not found in Awards.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
                 raise NotFound('-'+ str(i)+'- parameter was not found in Awards.')
-        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
         return filtro    
 
 class ContractsList(generics.ListAPIView):
@@ -77,11 +80,11 @@ class ContractsList(generics.ListAPIView):
                 id_contract = self.request.GET.get('id_contract')
                 filtro =  filtro.filter(id_contract=id_contract)
                 log.debug("Parametro de busqueda de Awards, id_award: "+ unicode(id_contract))
-                log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
             else:
-                log.warn('-'+ str(i)+'- parameter was not found in Contracts.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.warn('-'+ str(i)+'- parameter was not found in Contracts.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
                 raise NotFound('-'+ str(i)+'- parameter was not found in Contracts.')
-        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
         return filtro    
 
 
@@ -123,9 +126,9 @@ class ReleasesList(generics.ListAPIView):
                     else:
                         pass
                 else:
-                    log.warn('-'+ str(i)+'- parameter was not found in Releases.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                    log.warn('-'+ str(i)+'- parameter was not found in Releases.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
                     raise NotFound('-'+ str(i)+'- parameter was not found in Releases.')
-            log.debug("URL busqueda de Releases: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+            log.debug("URL busqueda de Releases: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
             return filtro
 
 class PlanningList(generics.ListAPIView):
@@ -134,9 +137,9 @@ class PlanningList(generics.ListAPIView):
         queryset = Releases.objects.filter(planning__exists=True)
         for i in self.request.GET:
             if self.request.GET is None:
-                log.debug("URL busqueda de Planning: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.debug("URL busqueda de Planning: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
             else:
-                log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
                 raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
         return queryset
 
@@ -151,9 +154,9 @@ class PackageList(generics.ListAPIView):
                 num_constancia = self.request.GET.get('num_constancia')
                 filtro =  filtro.filter(num_constancia=num_constancia)
                 log.debug("Parametro de busqueda de Packagemetadata, num_constancia: "+ unicode(num_constancia))
-                log.debug("URL busqueda de Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.debug("URL busqueda de Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
             else:
-                log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+                log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
                 raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
-        log.debug("URL de busqueda: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')))
+        log.debug("URL de busqueda Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
         return filtro

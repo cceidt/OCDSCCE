@@ -39,7 +39,6 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_mongoengine',
-    #'mongoadmin',
     'mongoengine.django.mongo_auth',
     'apiRest',
 )
@@ -77,6 +76,10 @@ TEMPLATES = [
 #Administracion de permisos para la ejecucion de peticiones a rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        #'rest_framework.authentication.BasicAuthentication',
+        #'rest_framework.authentication.SessionAuthentication',
+    ),
     'PAGINATE_BY': 10
 }
 
@@ -92,14 +95,18 @@ DATABASES = {
     }
 }
 
-AUTHENTICATION_BACKENDS = (
-           'mongoengine.django.auth.MongoEngineBackend',
- )
-#AUTH_USER_MODEL = 'mongo_auth.MongoUser'
-#MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
 
+AUTHENTICATION_BACKENDS = (
+    'mongoengine.django.auth.MongoEngineBackend',
+)
+
+SESSION_ENGINE = 'mongoengine.django.sessions'
+SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 from mongoengine import connect
 connect(db='ocds', alias='default')
+
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
@@ -123,6 +130,7 @@ STATIC_URL = '/static/'
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -139,14 +147,6 @@ LOGGING = {
         },
         'logfile': {
             'level':'DEBUG',
-            'class':'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR + "/ocds.log",
-            'maxBytes': 50000,
-            'backupCount': 2,
-            'formatter': 'standard',
-        },
-        'warninglogfile': {
-            'level':'WARN',
             'class':'logging.handlers.RotatingFileHandler',
             'filename': BASE_DIR + "/ocds.log",
             'maxBytes': 50000,
@@ -182,10 +182,6 @@ LOGGING = {
         'apiRest.views': {
             'handlers': ['console', 'logfile'],
             'level': 'DEBUG',
-        },
-        'apiRest.views': {
-            'handlers': ['console', 'warninglogfile'],
-            'level': 'WARN',
         },
     }
 }
