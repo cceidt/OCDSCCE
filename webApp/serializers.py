@@ -1,7 +1,7 @@
 from apiRest.models import *
 from django import forms
 from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
-from rest_framework.serializers import ModelSerializer, CharField
+from rest_framework.serializers import ModelSerializer, CharField, SerializerMethodField
 
 class ValueSerializer(EmbeddedDocumentSerializer):
 	
@@ -48,29 +48,40 @@ class BuyerSerializer(EmbeddedDocumentSerializer):
         fields = ('identifier', 'name')
 
 class ReleasesSerializer(DocumentSerializer):
-    
+    buyer = BuyerSerializer(read_only=True)
+    tender = TenderSerializer(read_only=True)
+
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
-
+        
 
     class Meta:
-        a =('id','num_constancia', 'date', 'tag', 'tender', 'buyer')
-        def get_queryset(self):
-            queryset = Releases.objects.all()
-            tag = self.request.get('tag')
-            if 'contract' in tag or 'contractTermination' in tag:
-                a = ('num_constancia', 'date', 'tag', 'contracts', 'buyer')
-            if 'award' in tag or 'awardCancellation'in tag :
-                a = ('num_constancia', 'date', 'tag', 'awards', 'buyer')
-            else:
-                pass
-
-        tender = TenderSerializer(read_only=True,)
-        contracts = ContractSerializer(read_only=True)
-        awards = AwardsSerializer(read_only=True)
-        buyer = BuyerSerializer(read_only=True)
         model = Releases
-        fields = a
+        fields = ('num_constancia', 'date', 'tag', 'tender', 'buyer')
+
+class ReleasesContractsSerializer(DocumentSerializer):
+    buyer = BuyerSerializer(read_only=True)
+    contracts = ContractSerializer(read_only=True)
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+        
+
+    class Meta:
+        model = Releases
+        fields = ('num_constancia', 'date', 'tag', 'contracts', 'buyer')
+
+class ReleasesAwardsSerializer(DocumentSerializer):
+    buyer = BuyerSerializer(read_only=True)
+    awards = AwardsSerializer(read_only=True)
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+        
+
+    class Meta:
+        model = Releases
+        fields = ('num_constancia', 'date', 'tag', 'awards', 'buyer')
 
 
 class PackagemetadataSerializer(DocumentSerializer):
@@ -79,6 +90,28 @@ class PackagemetadataSerializer(DocumentSerializer):
         return self.get_extra_kwargs()
 
     releases = ReleasesSerializer(many=True, read_only=True)
+
+    class Meta:
+        model =Packagemetadata
+        fields = ('num_constancia','uri', 'publishedDate','releases', 'publisher')
+
+class PackagemetadataContractSerializer(DocumentSerializer):
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+
+    releases = ReleasesContractsSerializer(many=True, read_only=True)
+
+    class Meta:
+        model =Packagemetadata
+        fields = ('num_constancia','uri', 'publishedDate','releases', 'publisher')
+
+class PackagemetadataAwardSerializer(DocumentSerializer):
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+
+    releases = ReleasesAwardsSerializer(many=True, read_only=True)
 
     class Meta:
         model =Packagemetadata

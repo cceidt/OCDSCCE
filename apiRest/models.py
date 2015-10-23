@@ -204,7 +204,7 @@ class Contracts(Document):
      id_release = StringField(max_length=50)
 
 """Clase Releases"""
-class Releases(Document):
+class Releases(EmbeddedDocument):
      num_constancia = StringField(max_length=50)
      id_release = StringField(max_length=50)
      date = DateTimeField()
@@ -222,7 +222,7 @@ class Releases(Document):
 class Packagemetadata(Document):
     uri = URLField()
     publishedDate = DateTimeField()
-    releases = ListField(ReferenceField(Releases))
+    releases = ListField(EmbeddedDocumentField(Releases))
     publisher = EmbeddedDocumentField(Organization)
     num_constancia = StringField(max_length=50)
     #license = URLField()
