@@ -20,7 +20,6 @@ from django.conf.urls import include
 
 
 urlpatterns = [
-	url(r'^$', RedirectView.as_view(url='/apirest/releases/')),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^apirest/', include('apiRest.urls', namespace="apirest")),
     url(r'^webapp/', include('webApp.urls', namespace="webapp")),

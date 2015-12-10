@@ -41,10 +41,13 @@ INSTALLED_APPS = (
     'rest_framework_mongoengine',
     'mongoengine.django.mongo_auth',
     'apiRest',
+    'webApp',
+    'corsheaders',
 )
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -54,6 +57,13 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
     #'django.contrib.session.middleware.SessionMiddleware',
 )
+
+CORS_URLS_REGEX = r'^/webapp/.*$'
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_METHODS = (
+        'GET'
+    )
 
 ROOT_URLCONF = 'opendata.urls'
 
@@ -77,9 +87,12 @@ TEMPLATES = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        #'rest_framework.authentication.BasicAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
         #'rest_framework.authentication.SessionAuthentication',
     ),
+    #'DEFAULT_RENDERER_CLASSES': (
+    #    'rest_framework_csv.renderers.CSVRenderer',
+    #),
     'PAGINATE_BY': 10
 }
 

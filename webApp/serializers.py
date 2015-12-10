@@ -47,17 +47,17 @@ class BuyerSerializer(EmbeddedDocumentSerializer):
         model = Organization
         fields = ('identifier', 'name')
 
-class ReleasesSerializer(DocumentSerializer):
-    buyer = BuyerSerializer(read_only=True)
-    tender = TenderSerializer(read_only=True)
+# class ReleasesSerializer(DocumentSerializer):
+#     buyer = BuyerSerializer(read_only=True)
+#     tender = TenderSerializer(read_only=True)
 
-    def _include_additional_options(self, *args, **kwargs):
-        return self.get_extra_kwargs()
+#     def _include_additional_options(self, *args, **kwargs):
+#         return self.get_extra_kwargs()
         
 
-    class Meta:
-        model = Releases
-        fields = ('num_constancia', 'date', 'tag', 'tender', 'buyer')
+#     class Meta:
+#         model = Releases
+#         fields = ('num_constancia', 'date', 'tag', 'tender', 'buyer')
 
 class ReleasesContractsSerializer(DocumentSerializer):
     buyer = BuyerSerializer(read_only=True)
@@ -89,7 +89,7 @@ class PackagemetadataSerializer(DocumentSerializer):
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
 
-    releases = ReleasesSerializer(many=True, read_only=True)
+    #releases = ReleasesSerializer(many=True, read_only=True)
 
     class Meta:
         model =Packagemetadata

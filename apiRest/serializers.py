@@ -11,7 +11,7 @@ class TendersSerializer(DocumentSerializer):
 
     class Meta:
         model = Tenders
-        fields = ('id', 'id_tender','title','description','status','items','minValue','value','procurementMethod','procurementMethodRationale','awardCriteria','awardCriteriaDetails','submissionMethod','submissionMethodDetails', 'tenderPeriod', 'enquiryPeriod', 'hasEnquiries', 'eligibilityCriteria', 'awardPeriod', 'numberOfTenderers', 'tenderers', 'procuringEntity', 'documents', 'milestones', 'amendment')
+        fields = ('id_tender','title','description','status','items','minValue','value','procurementMethod','procurementMethodRationale','awardCriteria','awardCriteriaDetails','submissionMethod','submissionMethodDetails', 'tenderPeriod', 'enquiryPeriod', 'hasEnquiries', 'eligibilityCriteria', 'awardPeriod', 'numberOfTenderers', 'tenderers', 'procuringEntity', 'documents', 'milestones', 'amendment')
 
 class AwardsSerializer(DocumentSerializer):
 

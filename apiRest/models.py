@@ -92,7 +92,7 @@ class Organization(EmbeddedDocument):
      contactPoint = EmbeddedDocumentField(ContactPoint)
 
 """Clase Tender"""
-class Tenders(Document):
+class Tenders(EmbeddedDocument):
      ENQUIRIES_CHOICES = (
           ('0', 'Yes'),
           ('1', 'No'),
@@ -150,7 +150,7 @@ class Planning(EmbeddedDocument):
      documents = ListField(EmbeddedDocumentField(Documents))
 
 """Clase Award"""
-class Awards(Document):
+class Awards(EmbeddedDocument):
      id_award = IntField()
      title = StringField(max_length=50)
      description = StringField(max_length=50)
@@ -187,7 +187,7 @@ class Implementation(EmbeddedDocument):
      milestones = ListField(EmbeddedDocumentField(Milestone))
 
 """Clase Contract"""
-class Contracts(Document):
+class Contracts(EmbeddedDocument):
      id_contract = StringField(max_length=50)
      awardID = StringField(max_length=50)
      title = StringField(max_length=50)
@@ -211,10 +211,10 @@ class Releases(EmbeddedDocument):
      tag = ListField()
      initiationType = StringField(max_length=50)
      planning = EmbeddedDocumentField(Planning)
-     tender = ReferenceField(Tenders)
+     tender = ListField(EmbeddedDocumentField(Tenders))
      buyer = EmbeddedDocumentField(Organization)
-     awards = ListField(ReferenceField(Awards))
-     contracts = ListField(ReferenceField(Contracts))
+     awards = ListField(EmbeddedDocumentField(Awards))
+     contracts = ListField(EmbeddedDocumentField(Contracts))
      language = StringField(max_length=50)
 
 
