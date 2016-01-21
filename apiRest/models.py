@@ -72,6 +72,7 @@ class Documents(EmbeddedDocument):
      dateModified = DateTimeField()
      format = StringField(max_length=50)
      language = StringField(max_length=50)
+     id_release = StringField(max_length=50)
 
 """Clase Milestone"""
 class Milestone(EmbeddedDocument):
@@ -82,6 +83,7 @@ class Milestone(EmbeddedDocument):
      dateModified = DateTimeField()
      status = StringField(max_length=50)
      documents = ListField(EmbeddedDocumentField(Documents))
+     id_release = StringField(max_length=50)
 
 """Clase Organization"""
 class Organization(EmbeddedDocument):
@@ -122,6 +124,7 @@ class Tenders(EmbeddedDocument):
      milestones = ListField(EmbeddedDocumentField(Milestone))
      amendment = EmbeddedDocumentField(Amendment)
      deliveryAddressh = ListField(EmbeddedDocumentField(Address))
+     id_release = StringField(max_length=50)
 
      class Meta:
         indexes = [
@@ -145,9 +148,10 @@ class Budget(EmbeddedDocument):
 
 """Clase Planning"""
 class Planning(EmbeddedDocument):
-     budget = ListField(EmbeddedDocumentField(Budget))
+     budget = EmbeddedDocumentField(Budget)
      rationale = StringField(max_length=50)
      documents = ListField(EmbeddedDocumentField(Documents))
+     id_release = StringField(max_length=50)
 
 """Clase Award"""
 class Awards(EmbeddedDocument):
@@ -211,7 +215,7 @@ class Releases(EmbeddedDocument):
      tag = ListField()
      initiationType = StringField(max_length=50)
      planning = EmbeddedDocumentField(Planning)
-     tender = ListField(EmbeddedDocumentField(Tenders))
+     tender = EmbeddedDocumentField(Tenders)
      buyer = EmbeddedDocumentField(Organization)
      awards = ListField(EmbeddedDocumentField(Awards))
      contracts = ListField(EmbeddedDocumentField(Contracts))
