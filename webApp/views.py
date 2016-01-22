@@ -46,7 +46,7 @@ class PackageList(generics.ListAPIView):
 					#Buscar por numero de constancia
 					if i == 'num_constancia':
 						num_constancia = self.request.GET.get('num_constancia')
-						filtro = filtro.filter(releases__num_constancia=num_constancia)
+						filtro = filtro.filter(num_constancia=num_constancia)
 						return filtro
 					#Buscar por categoria del contrato, por codigo UNSPSC
 					if i == 'items':
@@ -55,11 +55,11 @@ class PackageList(generics.ListAPIView):
 					#Buscar por fecha
 					#Fecha inicio
 					if i == 'start':
-						start = datetime.unicodeptime((self.request.GET.get('start')),'%Y-%m-%d')
+						start = self.request.GET.get('start')
 						filtro = filtro.filter(releases__date__gte=start)
                     #Fecha fin
 					if i == 'finish':
-						finish = datetime.unicodeptime((self.request.GET.get('finish')),'%Y-%m-%d')
+						finish = self.request.GET.get('finish')
 						filtro = filtro.filter(releases__date__lte=finish)
 					#Buscar por departamento de ejecucion
 					if i == 'region':
@@ -76,7 +76,7 @@ class PackageList(generics.ListAPIView):
 					#Buscar por Nit de la entidad compradora
 					if i == 'identifier':
 						identifier = self.request.GET.get('identifier')
-						filtro = filtro.filter(releases__buyer__identifier__id_ident__contains=identifier)
+						filtro = filtro.filter(releases__buyer__identifier__id__contains=identifier)
 					else:
 						pass
 		return filtro

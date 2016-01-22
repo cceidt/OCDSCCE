@@ -12,6 +12,7 @@ from rest_framework.settings import api_settings
 from rest_framework_csv import renderers as r
 from rest_framework import viewsets
 
+from datetime import datetime
 
 log = logging.getLogger(__name__)
 
@@ -45,12 +46,12 @@ class PackageList(generics.ListAPIView):
 					log.debug("Parametro de busqueda de release, tag: "+ unicode(tag))
 				#Buscar por fecha inicial
 				if i == 'start':
-					start = datetime.unicodeptime((self.request.GET.get('start')),'%Y-%m-%d')
+					start = self.request.GET.get('start')
 					filtro = filtro.filter(releases__date__gte=start)
 					log.debug("Parametro de busqueda de release, start(fecha inicial): "+ unicode(start))
 				#Buscar por fecha final
 				if i == 'finish':
-					finish = datetime.unicodeptime((self.request.GET.get('finish')),'%Y-%m-%d')
+					finish = self.request.GET.get('finish')
 					filtro = filtro.filter(releases__date__lte=finish)
 					log.debug("Parametro de busqueda de release, finish(fecha final): "+ unicode(finish))
 				#Buscar por estado de tender
@@ -88,7 +89,8 @@ class PackageList(generics.ListAPIView):
 		log.debug("URL de busqueda Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
 		return filtro
 
-class MyView(viewsets.ModelViewSet):
-	queryset = Packagemetadata.objects.all()
-	serializer_class = PackagemetadataSerializer
-	renderer_classes = [r.CSVRenderer, ] + api_settings.DEFAULT_RENDERER_CLASSES
+# class MyView(viewsets.ModelViewSet):
+# 	queryset = Packagemetadata.objects.all()
+# 	serializer_class = PackagemetadataSerializer
+# 	renderer_classes = [r.CSVRenderer, ] + api_settings.DEFAULT_RENDERER_CLASSES
+
