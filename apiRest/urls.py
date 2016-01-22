@@ -4,5 +4,4 @@ from django.views.generic import RedirectView
 
 urlpatterns = patterns('',
      url(r'^package/$', views.PackageList.as_view()),
-     #url(r'^myview/$', views.MyView.as_view({'get': 'list'})),
 )

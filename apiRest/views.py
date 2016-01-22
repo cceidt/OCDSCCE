@@ -7,20 +7,17 @@ from datetime import datetime
 import logging
 from rest_framework.exceptions import NotFound
 import socket
-from django.contrib.auth.decorators import login_required
-from rest_framework.settings import api_settings
-from rest_framework_csv import renderers as r
-from rest_framework import viewsets
 
-from datetime import datetime
-
+#Log var start
 log = logging.getLogger(__name__)
 
 class PackageList(generics.ListAPIView):
+	#Serializador usado por la clase importado de apiRest.serializers
 	serializer_class = PackagemetadataSerializer
+
 	def get_queryset(self):
 		queryset = Packagemetadata.objects.all()
-		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'value', 'id_award', 'id_contract']
+		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'valueDown', 'valueUp', 'id_award', 'id_contract']
 		filtro = Packagemetadata.objects.all()
 		for i in self.request.GET:
 			if i in a:
@@ -66,14 +63,21 @@ class PackageList(generics.ListAPIView):
 					log.debug("Parametro de busqueda de tender, title: "+ unicode(title))
 				#Buscar por codigo UNSPSC
 				if i == 'items':
-					items = self.request.GET.get('items')
+					itemsStr = self.request.GET.get('items')
+					items = int('0' + itemsStr)
 					filtro = filtro.filter(releases__tender__items__id_item=items)
 					log.debug("Parametro de busqueda de tender, items - id_item: "+ unicode(items))
-				#Buscar por el valor de tender
-				if i == 'value':
-					value = self.request.GET.get('value')
-					filtro = filtro.filter(releases__tender__value__amount=value)
-					log.debug("Parametro de busqueda de tender, value: "+ unicode(value))
+				#Buscar por rengo de valor de tender
+				#Valor hacia arriba
+				if i == 'valueUp':
+					value = self.request.GET.get('valueUp')
+					filtro = filtro.filter(releases__tender__value__amount__gte=value)
+					log.debug("Parametro de busqueda de tender, valueUp: "+ unicode(value))	
+				#Valor hacia abajo
+				if i == 'valueDown':
+					value = self.request.GET.get('valueDown')
+					filtro = filtro.filter(releases__tender__value__amount__lte=value)
+					log.debug("Parametro de busqueda de tender, valueDown: "+ unicode(value))
 				if i == 'id_award':
 					id_award = self.request.GET.get('id_award')
 					filtro =  filtro.filter(releases__awards__id_award=id_award)
@@ -82,15 +86,9 @@ class PackageList(generics.ListAPIView):
 				if i == 'id_contract':
 					id_contract = self.request.GET.get('id_contract')
 					filtro =  filtro.filter(releases__contracts__id_contract=id_contract)
-					log.debug("Parametro de busqueda de Awards, id_award: "+ unicode(id_contract))
-
-				#log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
-				#raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
+					log.debug("Parametro de busqueda de Contracts, id_contract: "+ unicode(id_contract))
+			else:
+				log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
+				raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
 		log.debug("URL de busqueda Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
 		return filtro
-
-# class MyView(viewsets.ModelViewSet):
-# 	queryset = Packagemetadata.objects.all()
-# 	serializer_class = PackagemetadataSerializer
-# 	renderer_classes = [r.CSVRenderer, ] + api_settings.DEFAULT_RENDERER_CLASSES
-
