@@ -17,7 +17,7 @@ class PackageList(generics.ListAPIView):
 
 	def get_queryset(self):
 		queryset = Packagemetadata.objects.all()
-		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'valueDown', 'valueUp', 'id_award', 'id_contract']
+		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'valueDown', 'valueUp', 'id_award', 'id_contract', 'page']
 		filtro = Packagemetadata.objects.all()
 		for i in self.request.GET:
 			if i in a:
