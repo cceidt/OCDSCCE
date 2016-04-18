@@ -17,7 +17,7 @@ class PackageList(generics.ListAPIView):
 
 	def get_queryset(self):
 		queryset = Packagemetadata.objects.all()
-		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'valueDown', 'valueUp', 'id_award', 'id_contract', 'page']
+		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'valueDown', 'valueUp', 'id_award', 'id_contract', 'page', 'procurement_type']
 		filtro = Packagemetadata.objects.all()
 		for i in self.request.GET:
 			if i in a:
@@ -25,6 +25,12 @@ class PackageList(generics.ListAPIView):
 					num_constancia = self.request.GET.get('num_constancia')
 					filtro =  filtro.filter(num_constancia=num_constancia)
 					log.debug("Parametro de busqueda de Packagemetadata, num_constancia: "+ unicode(num_constancia))
+					log.debug("URL busqueda de Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
+				#Buscar por modealidad de contratacion
+				if i == 'procurement_type':
+					procurement_type = self.request.GET.get('procurement_type')
+					filtro =  filtro.filter(procurement_type=procurement_type)
+					log.debug("Parametro de busqueda de Packagemetadata, procurement_type: "+ unicode(procurement_type))
 					log.debug("URL busqueda de Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
 				#Buscar por nombe de entidad	
 				if i == 'name':

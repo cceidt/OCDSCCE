@@ -47,7 +47,7 @@ class PlanningSerializer(DocumentSerializer):
 
     class Meta:
         model = Releases
-        fields = ('planning',)
+        fields = ('planning','documents',)
 
 class AmendmentSerializer(EmbeddedDocumentSerializer):
 
@@ -92,4 +92,4 @@ class PackagemetadataSerializer(DocumentSerializer):
 
     class Meta:
         model =Packagemetadata
-        fields = ('num_constancia','uri', 'publishedDate','releases', 'publisher')
+        fields = ('num_constancia','uri', 'publishedDate','releases', 'publisher', 'procurement_type')
