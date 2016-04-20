@@ -2,6 +2,7 @@ from apiRest.models import *
 from django import forms
 from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
 from  rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 from django.contrib.auth.models import User
 
 class TendersSerializer(DocumentSerializer):
@@ -93,3 +94,13 @@ class PackagemetadataSerializer(DocumentSerializer):
     class Meta:
         model =Packagemetadata
         fields = ('num_constancia','uri', 'publishedDate','releases', 'publisher', 'procurement_type')
+
+class ProcurementTypeSerializer(DocumentSerializer):
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+
+    class Meta:
+        model = Packagemetadata
+        fields = ('procurement_type',)
+

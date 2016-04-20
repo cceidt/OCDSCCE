@@ -2,11 +2,26 @@
 from apiRest.models import *
 from apiRest.serializers import *
 from rest_framework_mongoengine import generics
-from rest_framework import filters
+from rest_framework import filters, views
 from datetime import datetime
 import logging
 from rest_framework.exceptions import NotFound
 import socket
+from django.db.models import Count
+import pymongo
+from bson.code import Code
+from rest_framework.response import Response
+from django.core import serializers
+from bson.json_util import dumps
+from bson import json_util 
+
+
+# MongoDB conection
+connection = pymongo.MongoClient("mongodb://localhost")
+# DB conection Mongo
+db = connection.opendata
+
+
 
 #Log var start
 log = logging.getLogger(__name__)
@@ -98,3 +113,28 @@ class PackageList(generics.ListAPIView):
 				raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
 		log.debug("URL de busqueda Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
 		return filtro
+
+class ProcurementTypeList(views.APIView):
+	def get(self, request, format=None):
+		reducer = Code("""
+			function(doc, prev) { prev.sum += 1; }
+			""")
+		queryset = db.packagemetadata.group( key = { "procurement_type" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
+		#serializer = ProcurementTypeSerializer(queryset,  many=True)
+		return Response(queryset)
+
+class StateList(views.APIView):
+	def get(self, request, format=None):
+		reducer = Code("""
+			function(doc, prev) { prev.sum += 1; }
+			""")
+		queryset = db.packagemetadata.group( key = { "releases.0.tag.0" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
+		return Response(queryset)
+
+class EntityList(views.APIView):
+	def get(self, request, format=None):
+		reducer = Code("""
+			function(doc, prev) { prev.sum += 1; }
+			""")
+		queryset = db.packagemetadata.group( key = { "publisher.identifier.legalName" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
+		return Response(queryset)
