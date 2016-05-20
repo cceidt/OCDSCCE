@@ -14,6 +14,8 @@ from rest_framework.response import Response
 from django.core import serializers
 from bson.json_util import dumps
 from bson import json_util 
+from rest_framework_csv import renderers as r
+import re
 
 
 # MongoDB conection
@@ -136,5 +138,10 @@ class EntityList(views.APIView):
 		reducer = Code("""
 			function(doc, prev) { prev.sum += 1; }
 			""")
-		queryset = db.packagemetadata.group( key = { "publisher.identifier.legalName" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
+		name = self.request.GET.get('name')
+		if name:
+			regex = ".*" + name + ".*";
+			queryset = db.packagemetadata.group( key = { "publisher.identifier.legalName" : 1 }, condition={ "publisher.identifier.legalName" : re.compile(regex, re.IGNORECASE) } ,initial= {"sum":0}, reduce=reducer )
+		else:
+			queryset = db.packagemetadata.group( key = { "publisher.identifier.legalName" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
 		return Response(queryset)
