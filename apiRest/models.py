@@ -229,4 +229,5 @@ class Packagemetadata(Document):
     releases = ListField(EmbeddedDocumentField(Releases))
     publisher = EmbeddedDocumentField(Organization)
     num_constancia = StringField(max_length=50)
+    ocid = StringField(max_length=50)
     procurement_type = StringField(max_length=50)

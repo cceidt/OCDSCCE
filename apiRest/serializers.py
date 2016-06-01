@@ -93,7 +93,7 @@ class PackagemetadataSerializer(DocumentSerializer):
 
     class Meta:
         model =Packagemetadata
-        fields = ('num_constancia','uri', 'publishedDate','releases', 'publisher', 'procurement_type')
+        fields = ('ocid','num_constancia','uri', 'publishedDate','releases', 'publisher', 'procurement_type')
 
 class ProcurementTypeSerializer(DocumentSerializer):
 
