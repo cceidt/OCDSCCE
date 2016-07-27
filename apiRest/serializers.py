@@ -30,7 +30,7 @@ class ContractsSerializer(DocumentSerializer):
 
     class Meta:
         model = Contracts
-        fields = ('id','id_contract','awardID','title','description','status','period','value','items','dateSigned','documents','amendment','implementation', 'id_release')
+        fields = ('id_contract','awardID','title','description','status','period','value','items','dateSigned','documents','amendment','implementation', 'id_release')
 
 class ReleasesSerializer(DocumentSerializer):
 
@@ -104,3 +104,24 @@ class ProcurementTypeSerializer(DocumentSerializer):
         model = Packagemetadata
         fields = ('procurement_type',)
 
+class TenderReleasesSerializer(DocumentSerializer):
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+
+    class Meta:
+        model = Releases
+        fields = ('tender')
+
+class TenderPackageSerializer(DocumentSerializer):
+    releases = TenderReleasesSerializer
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+
+    def _get_default_field_names(self, *args, **kwargs):
+        return self.get_field_names(*args, **kwargs)
+
+    class Meta:
+        model = Packagemetadata
+        fields = ('releases',)

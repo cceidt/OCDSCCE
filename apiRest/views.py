@@ -122,7 +122,6 @@ class ProcurementTypeList(views.APIView):
 			function(doc, prev) { prev.sum += 1; }
 			""")
 		queryset = db.packagemetadata.group( key = { "procurement_type" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
-		#serializer = ProcurementTypeSerializer(queryset,  many=True)
 		return Response(queryset)
 
 class StateList(views.APIView):
@@ -145,3 +144,96 @@ class EntityList(views.APIView):
 		else:
 			queryset = db.packagemetadata.group( key = { "publisher.identifier.legalName" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
 		return Response(queryset)
+
+class TenderList(generics.ListAPIView):
+	serializer_class = TenderPackageSerializer
+
+	def get_queryset(self):
+		#queryset = db.packagemetadata.find({},{'releases.tender': 1})
+		queryset = Packagemetadata.objects.only('releases.tender')
+		for i in self.request.GET:
+			#Buscar por estado de tender
+			if i == 'status':
+				status = self.request.GET.get('status')
+				queryset = queryset.filter(releases__tender__status=status)
+			#Buscar por titulo de tender
+			if i == 'id_contract':
+				title = self.request.GET.get('id_contract')
+				queryset = queryset.filter(releases__tender__id_contract__contains=title)
+			#Buscar por codigo UNSPSC
+			if i == 'items':
+				itemsStr = self.request.GET.get('items')
+				items = int('0' + itemsStr)
+				queryset = queryset.filter(releases__tender__items__id_item=items)
+			#Buscar por rengo de valor de tender
+			#Valor hacia arriba
+			if i == 'valueUp':
+				value = self.request.GET.get('valueUp')
+				queryset = queryset.filter(releases__tender__value__amount__gte=value)
+			#Valor hacia abajo
+			if i == 'valueDown':
+				value = self.request.GET.get('valueDown')
+				queryset = queryset.filter(releases__tender__value__amount__lte=value)
+		return queryset
+
+class ContractList(generics.ListAPIView):
+	serializer_class = TenderPackageSerializer
+
+	def get_queryset(self):
+		#queryset = db.packagemetadata.find({},{'releases.tender': 1})
+		queryset = Packagemetadata.objects.only('releases.contracts')
+		for i in self.request.GET:
+			#Buscar por estado de tender
+			if i == 'status':
+				status = self.request.GET.get('status')
+				queryset = queryset.filter(releases__contracts__status=status)
+			#Buscar por titulo de tender
+			if i == 'title':
+				title = self.request.GET.get('title')
+				queryset = queryset.filter(releases__contracts__title__contains=title)
+			#Buscar por codigo UNSPSC
+			if i == 'items':
+				itemsStr = self.request.GET.get('items')
+				items = int('0' + itemsStr)
+				queryset = queryset.filter(releases__contracts__items__id_item=items)
+			#Buscar por rengo de valor de tender
+			#Valor hacia arriba
+			if i == 'valueUp':
+				value = self.request.GET.get('valueUp')
+				queryset = queryset.filter(releases__contracts__value__amount__gte=value)
+			#Valor hacia abajo
+			if i == 'valueDown':
+				value = self.request.GET.get('valueDown')
+				queryset = queryset.filter(releases__contracts__value__amount__lte=value)
+		return queryset
+
+class AwardList(generics.ListAPIView):
+	serializer_class = TenderPackageSerializer
+
+	def get_queryset(self):
+		#queryset = db.packagemetadata.find({},{'releases.tender': 1})
+		queryset = Packagemetadata.objects.only('releases.awards')
+		for i in self.request.GET:
+			#Buscar por estado de tender
+			if i == 'status':
+				status = self.request.GET.get('status')
+				queryset = queryset.filter(releases__awards__status=status)
+			#Buscar por titulo de tender
+			if i == 'title':
+				title = self.request.GET.get('title')
+				queryset = queryset.filter(releases__awards__title__contains=title)
+			#Buscar por codigo UNSPSC
+			if i == 'items':
+				itemsStr = self.request.GET.get('items')
+				items = int('0' + itemsStr)
+				queryset = queryset.filter(releases__awards__items__id_item=items)
+			#Buscar por rengo de valor de tender
+			#Valor hacia arriba
+			if i == 'valueUp':
+				value = self.request.GET.get('valueUp')
+				queryset = queryset.filter(releases__awards__value__amount__gte=value)
+			#Valor hacia abajo
+			if i == 'valueDown':
+				value = self.request.GET.get('valueDown')
+				queryset = queryset.filter(releases__awards__value__amount__lte=value)
+		return queryset
