@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+import os
 from apiRest.models import *
 from apiRest.serializers import *
 from rest_framework_mongoengine import generics
@@ -17,9 +18,10 @@ from bson import json_util
 from rest_framework_csv import renderers as r
 import re
 
-
+mongo_string = "mongodb://"+ os.environ.get('MONGO_HOST')+ ":"+ os.environ.get('MONGO_PORT')
+print mongo_string
 # MongoDB conection
-connection = pymongo.MongoClient("mongodb://localhost")
+connection = pymongo.MongoClient(mongo_string)
 # DB conection Mongo
 db = connection.opendata
 
