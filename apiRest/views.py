@@ -23,7 +23,7 @@ print mongo_string
 # MongoDB conection
 connection = pymongo.MongoClient(mongo_string)
 # DB conection Mongo
-db = connection.opendata
+db = connection.opendataocid
 
 
 
