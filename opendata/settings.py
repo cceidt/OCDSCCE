@@ -100,7 +100,7 @@ AUTHENTICATION_BACKENDS = (
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 from mongoengine import connect
-connect(db='opendataocid', alias='default', host=os.environ.get('MONGO_HOST'), port=int(os.environ.get('MONGO_PORT')))
+connect(db='opendataocid', alias='default', host='localhost', port=5017)
 
 
 

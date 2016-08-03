@@ -18,10 +18,8 @@ from bson import json_util
 from rest_framework_csv import renderers as r
 import re
 
-mongo_string = "mongodb://"+ os.environ.get('MONGO_HOST')+ ":"+ os.environ.get('MONGO_PORT')
-print mongo_string
 # MongoDB conection
-connection = pymongo.MongoClient(mongo_string)
+connection = pymongo.MongoClient("mongodb://localhost:5017")
 # DB conection Mongo
 db = connection.opendataocid
 
