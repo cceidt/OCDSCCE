@@ -35,7 +35,7 @@ class PackageList(generics.ListAPIView):
 	def get_queryset(self):
 		queryset = Packagemetadata.objects.all()
 		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'valueDown', 'valueUp', 'id_award', 'id_contract', 'page', 'procurement_type']
-		filtro = Packagemetadata.objects.all()
+		filtro = Packagemetadata.objects.all().order_by('-publishedDate')
 		for i in self.request.GET:
 			if i in a:
 				if i == 'num_constancia':
@@ -147,35 +147,9 @@ class EntityList(views.APIView):
 
 class TenderList(generics.ListAPIView):
 	serializer_class = TenderPackageSerializer
+	queryset = Packagemetadata.objects.all()
 
-	def get_queryset(self):
-		#queryset = db.packagemetadata.find({},{'releases.tender': 1})
-		queryset = Packagemetadata.objects.only('releases.tender')
-		for i in self.request.GET:
-			#Buscar por estado de tender
-			if i == 'status':
-				status = self.request.GET.get('status')
-				queryset = queryset.filter(releases__tender__status=status)
-			#Buscar por titulo de tender
-			if i == 'id_contract':
-				title = self.request.GET.get('id_contract')
-				queryset = queryset.filter(releases__tender__id_contract__contains=title)
-			#Buscar por codigo UNSPSC
-			if i == 'items':
-				itemsStr = self.request.GET.get('items')
-				items = int('0' + itemsStr)
-				queryset = queryset.filter(releases__tender__items__id_item=items)
-			#Buscar por rengo de valor de tender
-			#Valor hacia arriba
-			if i == 'valueUp':
-				value = self.request.GET.get('valueUp')
-				queryset = queryset.filter(releases__tender__value__amount__gte=value)
-			#Valor hacia abajo
-			if i == 'valueDown':
-				value = self.request.GET.get('valueDown')
-				queryset = queryset.filter(releases__tender__value__amount__lte=value)
-		return queryset
-
+	
 class ContractList(generics.ListAPIView):
 	serializer_class = TenderPackageSerializer
 

@@ -114,14 +114,18 @@ class TenderReleasesSerializer(DocumentSerializer):
         fields = ('tender')
 
 class TenderPackageSerializer(DocumentSerializer):
-    releases = TenderReleasesSerializer
+    tender = serializers.SerializerMethodField('getTender')
+
+    def getTender(self, obj):
+        data = Packagemetadata.objects.filter(pk=obj.pk)
+        concathijo = []
+        for registro in data:
+            result = registro.to_mongo()
+            return result['releases'][0]['tender']
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
 
-    def _get_default_field_names(self, *args, **kwargs):
-        return self.get_field_names(*args, **kwargs)
-
     class Meta:
         model = Packagemetadata
-        fields = ('releases',)
+        fields = ('tender',)
