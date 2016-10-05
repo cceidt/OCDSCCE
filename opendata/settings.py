@@ -74,6 +74,7 @@ TEMPLATES = [
 #Administracion de permisos para la ejecucion de peticiones a rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
     ),
@@ -100,7 +101,7 @@ from pymongo import read_preferences
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 from mongoengine import connect
-connect(db='opendataocid', alias='default', host='localhost', port=5017, read_preference=read_preferences.ReadPreference.PRIMARY)
+connect(db='opendata2', alias='default', host='localhost', port=27017, read_preference=read_preferences.ReadPreference.PRIMARY)
 
 
 
@@ -116,7 +117,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)
