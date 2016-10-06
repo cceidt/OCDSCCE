@@ -1,0 +1,73 @@
+#Version en produccion de OCDS 20161005
+#entity
+var map = function () {
+    for (var j=0; j< this.releases.length; j++){
+        var key = {
+            name: this.releases[j].buyer.name,
+            nit: this.releases[j].buyer.identifier.id
+        };
+        var value = {
+            count:1
+        };
+        emit(key, value);
+    }
+}
+
+
+var reduce = function (key, values) {
+   var result = { count: 0 };
+    values.forEach(function (value) {
+        result.count += value.count;
+    });
+    return result;
+
+   }
+
+
+db.packagemetadata.mapReduce(map,reduce,{out:'entity'});
+
+#status
+var map = function () {
+    for (var j=0; j< this.releases.length; j++){
+        var key = {
+            name: this.releases[j].tender.status
+            };
+        var value = {
+            count:1
+        };
+        emit(key, value);
+    }
+}
+
+
+var reduce = function (key, values) {
+   var result = { count: 0 };
+    values.forEach(function (value) {
+        result.count += value.count;
+    });
+    return result;
+
+   }
+db.packagemetadata.mapReduce(map,reduce,{out:'status'}); 
+
+#Procurement o modalidad de contratación
+var map = function () {
+    var key = {
+        name: this.procurement_type,
+    };
+    var value = {
+        count:1
+    };
+    emit(key, value);
+}
+
+
+var reduce = function (key, values) {
+   var result = { count: 0 };
+    values.forEach(function (value) {
+        result.count += value.count;
+    });
+    return result;
+
+   }
+db.packagemetadata.mapReduce(map,reduce,{out:'procurement_type'});

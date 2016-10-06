@@ -211,3 +211,42 @@ class AwardList(generics.ListAPIView):
 				value = self.request.GET.get('valueDown')
 				queryset = queryset.filter(releases__awards__value__amount__lte=value)
 		return queryset
+
+class EntitadList(views.APIView):
+	def get(self, request, format=None):
+		queryset = db.entity.find()
+		for i in self.request.GET:
+			if i == 'name':
+				name = self.request.GET.get('name')
+				queryset = db.entity.find({'_id.name': {'$regex': name, '$options': '-ii' } })
+			if i == 'nit':
+				nit = self.request.GET.get('nit')
+				queryset = db.entity.find({'_id.nit': {'$regex': nit} })
+		inserted = []
+		for doc in queryset:
+			inserted.append(doc)
+		return Response(inserted)
+
+class EstadosList(views.APIView):
+	def get(self, request, format=None):
+		queryset = db.status.find()
+		for i in self.request.GET:
+			if i == 'name':
+				name = self.request.GET.get('name')
+				queryset = db.status.find({'_id.name': {'$regex': name, '$options': '-ii' } })
+		inserted = []
+		for doc in queryset:
+			inserted.append(doc)
+		return Response(inserted)
+
+class TipoContratoList(views.APIView):
+	def get(self, request, format=None):
+		queryset = db.procurement_type.find()
+		for i in self.request.GET:
+			if i == 'name':
+				name = self.request.GET.get('name')
+				queryset = db.procurement_type.find({'_id.name': {'$regex': name, '$options': '-ii' } })
+		inserted = []
+		for doc in queryset:
+			inserted.append(doc)
+		return Response(inserted)

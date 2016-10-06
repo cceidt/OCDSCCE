@@ -9,8 +9,10 @@ urlpatterns = patterns('',
      url(r'^package/contract/$', ContractList.as_view()),
      url(r'^package/award/$', AwardList.as_view()),
      url(r'^package/planning/$', PlanningList.as_view()),
+     url(r'^entity/v2/$', views.EntitadList.as_view()),
+     url(r'^state/v2/$', views.EstadosList.as_view()),
+     url(r'^procurement/v2/$', views.TipoContratoList.as_view()),  
      url(r'^procurement/$', views.ProcurementTypeList.as_view()),
      url(r'^state/$', views.StateList.as_view()),
      url(r'^entity/$', views.EntityList.as_view()),
-     
 )
