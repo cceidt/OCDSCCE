@@ -95,3 +95,30 @@ class ReleasesList(generics.ListAPIView):
 		del response.data['results']
 		return response
 
+class PackageView(generics.ListAPIView):
+	serializer_class = ReleasesSerializer
+
+	def get_queryset(self):
+		return Releases.objects.filter(ocid=self.request.GET.get('ocid'))
+
+	def get(self, request, *args, **kwargs):
+		publisher = {
+				"name": "Colombia Compra",
+				"uri": "http://datos.colombiacompra.gov.co/"
+				}
+		response = super(PackageView, self).list(request, args, kwargs)
+		release = Releases.objects.get(ocid=self.request.GET.get('ocid'))
+		publishedDate = release.publishedDate
+		uri = release.uri
+		print publishedDate
+		response.data['publishedDate'] = publishedDate.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+		response.data['uri'] = uri
+		response.data['publisher'] = publisher 
+		response.data['publicationPolicy'] = 'http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos'
+		response.data['license'] = 'http://www.colombiacompra.gov.co/'
+		response.data['releases'] = response.data['results']
+		del response.data['results']
+		del response.data['count']
+		del response.data['next']
+		del response.data['previous']
+		return response

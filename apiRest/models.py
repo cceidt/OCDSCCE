@@ -58,6 +58,7 @@ class Documents(EmbeddedDocument):
      language = StringField(max_length=50)
      ocid = StringField(max_length=50)
 
+
 """Clase Organization"""
 class Organization(EmbeddedDocument):
      identifier = EmbeddedDocumentField(Identifier)

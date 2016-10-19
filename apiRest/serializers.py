@@ -80,8 +80,45 @@ class ValueSerializer(EmbeddedDocumentSerializer):
         model = Value
         fields = ('amount', 'currency')
 
+class DocumentsSerializer(EmbeddedDocumentSerializer):
+    datePublished = serializers.DateTimeField(format=api_settings.DATETIME_FORMAT)
+    dateModified = serializers.DateTimeField(format=api_settings.DATETIME_FORMAT)
+
+    def _include_additional_options(self, *args, **kwargs):
+        return self.get_extra_kwargs()
+
+    def to_representation(self, instance):
+        """
+        Object instance -> Dict of primitive datatypes.
+        """
+        ret = OrderedDict()
+        fields = [field for field in self.fields.values() if not field.write_only]
+
+        for field in fields:
+            try:
+                attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+
+            if attribute is not None:
+                represenation = field.to_representation(attribute)
+                if represenation is None:
+                    # Do not seralize empty objects
+                    continue
+                if isinstance(represenation, list) and not represenation:
+                   # Do not serialize empty lists
+                   continue
+                ret[field.field_name] = represenation
+
+        return ret
+
+    class Meta:
+        model = Documents
+        fields = ('id', 'documentType', 'title', 'description', 'url', 'datePublished', 'dateModified', 'format', 'language', 'ocid')
+
 class TenderSerializer(EmbeddedDocumentSerializer):
     tenderPeriod = PeriodSerializer()
+    documents = DocumentsSerializer(many=True)
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
@@ -116,6 +153,8 @@ class TenderSerializer(EmbeddedDocumentSerializer):
         fields = ('id','ocid','procurementMethod','title','description', 'enquiryPeriod', 'value', 'status','items','submissionMethod','tenderPeriod', 'documents')
 
 class AwardsSerializer(DocumentSerializer):
+    date = serializers.DateTimeField(format=api_settings.DATETIME_FORMAT)
+    documents = DocumentsSerializer(many=True)
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
@@ -150,6 +189,8 @@ class AwardsSerializer(DocumentSerializer):
         fields = ('id','ocid','status', 'date', 'value','suppliers', 'items','documents')
 
 class ContractsSerializer(DocumentSerializer):
+    period = PeriodSerializer()
+    documents = DocumentsSerializer(many=True)
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
@@ -185,8 +226,8 @@ class ContractsSerializer(DocumentSerializer):
 
 class ReleasesSerializer(DocumentSerializer):
     tender = TenderSerializer()
-    #contracts = ContractsSerializer()
-    #awards = serializers.ListField(AwardsSerializer())
+    contracts = ContractsSerializer(many=True)
+    awards = AwardsSerializer(many=True)
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
@@ -221,6 +262,7 @@ class ReleasesSerializer(DocumentSerializer):
         fields = ('id','ocid','uri', 'publishedDate','language', 'initiationType', 'planning','tender', 'tag', 'awards', 'contracts', 'date', 'buyer', 'procurement_type')
 
 class PlanningSerializer(DocumentSerializer):
+    documents = DocumentsSerializer(many=True)
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()

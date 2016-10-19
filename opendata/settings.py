@@ -78,6 +78,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'UNICODE_JSON':False,
     'PAGINATE_BY': 10
 }
 
@@ -101,7 +102,7 @@ from pymongo import read_preferences
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 from mongoengine import connect
-connect(db='opendata2', alias='default', host='localhost', port=27017, read_preference=read_preferences.ReadPreference.PRIMARY)
+connect(db='opendata', alias='default', host='localhost', port=27017, read_preference=read_preferences.ReadPreference.PRIMARY)
 
 
 
