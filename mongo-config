@@ -1,10 +1,23 @@
+db.getCollection('awards').ensureIndex({"id_release" : 1})
+db.getCollection('contracts').ensureIndex({"id_release" : 1})
+db.getCollection('planning').ensureIndex({"id_release" : 1})
+db.getCollection('planningDocuments').ensureIndex({"id_release" : 1})
+db.getCollection('tenderDocuments').ensureIndex({"id_release" : 1})
+db.getCollection('awardDocuments').ensureIndex({"id_release" : 1})
+db.getCollection('contractDocuments').ensureIndex({"id_release" : 1})
+db.getCollection('milestones').ensureIndex({"id_release" : 1})
+db.getCollection('packagemetadata').ensureIndex({"num_constancia" : 1})
+db.getCollection('packagemetadata').ensureIndex({"publishedDate" : 1})
+
+
+
 #Version en produccion de OCDS 20161005
 #entity
 var map = function () {
     for (var j=0; j< this.releases.length; j++){
         var key = {
             name: this.releases[j].buyer.name,
-            nit: this.releases[j].buyer.identifier.id
+            nit: this.releases[j].buyer.identifier.id_ident
         };
         var value = {
             count:1
