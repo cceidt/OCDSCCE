@@ -7,7 +7,7 @@ from rest_framework.response import Response
 import pymongo
 
 # MongoDB conection
-connection = pymongo.MongoClient("mongodb://localhost")
+connection = pymongo.MongoClient("mongodb://cceproocds020.compute-a18530.oraclecloud.internal:5017")
 # DB conection Mongo
 db = connection.opendata2
 
