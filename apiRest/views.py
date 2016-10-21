@@ -19,7 +19,7 @@ from rest_framework_csv import renderers as r
 import re
 
 # MongoDB conection
-connection = pymongo.MongoClient("mongodb://localhost:5017")
+connection = pymongo.MongoClient("mongodb://cceproocds020.compute-a18530.oraclecloud.internal:5017")
 # DB conection Mongo
 db = connection.opendataocid
 
