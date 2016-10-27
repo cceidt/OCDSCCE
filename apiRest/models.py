@@ -57,6 +57,7 @@ class Documents(EmbeddedDocument):
      format = StringField(max_length=50)
      language = StringField(max_length=50)
      ocid = StringField(max_length=50)
+     information_system = StringField(max_length=50)
 
 
 """Clase Organization"""
@@ -79,6 +80,7 @@ class Tender(EmbeddedDocument):
      submissionMethod = StringField(max_length=50)
      tenderPeriod = EmbeddedDocumentField(Period)
      documents = ListField(EmbeddedDocumentField(Documents))
+     information_system = StringField(max_length=50)
 
      class Meta:
         indexes = [
@@ -102,6 +104,7 @@ class Planning(EmbeddedDocument):
      ocid = StringField(max_length=50)
      budget = EmbeddedDocumentField(Budget)
      documents = ListField(EmbeddedDocumentField(Documents))
+     information_system = StringField(max_length=50)
 
 """Clase Award"""
 class Awards(EmbeddedDocument):
@@ -113,6 +116,7 @@ class Awards(EmbeddedDocument):
      suppliers = ListField(EmbeddedDocumentField(Organization))
      items = ListField(EmbeddedDocumentField(Item))
      documents = ListField(EmbeddedDocumentField(Documents))
+     information_system = StringField(max_length=50)
 
      class Meta:
         indexes = [
@@ -140,6 +144,7 @@ class Contracts(EmbeddedDocument):
      items = ListField(EmbeddedDocumentField(Item))
      dateSigned = DateTimeField()
      documents = ListField(EmbeddedDocumentField(Documents))
+     information_system = StringField(max_length=50)
      
 """Clase Releases"""
 class Releases(Document):
@@ -157,4 +162,4 @@ class Releases(Document):
     procurement_type = StringField(max_length=50)
     awards = ListField(EmbeddedDocumentField(Awards))
     contracts = ListField(EmbeddedDocumentField(Contracts))
-    
+    information_system = StringField(max_length=50)
