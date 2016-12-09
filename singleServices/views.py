@@ -3,7 +3,7 @@ from singleServices.serializers import *
 from rest_framework_mongoengine import generics
 from rest_framework import views
 from rest_framework.response import Response
-
+from rest_framework.renderers import JSONRenderer
 import pymongo
 
 # MongoDB conection
@@ -13,6 +13,7 @@ db = connection.opendata
 
 class TenderList(generics.ListAPIView):
 	serializer_class = TenderSerializer
+	renderer_classes = (JSONRenderer, )
 
 	def get_queryset(self):
 		queryset = Tender.objects.all()
@@ -60,6 +61,7 @@ class TenderList(generics.ListAPIView):
 
 class PlanningList(generics.ListAPIView):
 	serializer_class = PlanningSerializer
+	renderer_classes = (JSONRenderer, )
 
 	def get_queryset(self):
 		queryset = Planning.objects.all()
@@ -85,7 +87,8 @@ class PlanningList(generics.ListAPIView):
 
 class AwardsList(generics.ListAPIView):
 	serializer_class = AwardsSerializer
-	
+	renderer_classes = (JSONRenderer, )
+
 	def get_queryset(self):
 		queryset = Awards.objects.all()
 		for i in self.request.GET:
@@ -129,6 +132,7 @@ class AwardsList(generics.ListAPIView):
 
 class ContractsList(generics.ListAPIView):
 	serializer_class = ContractsSerializer
+	renderer_classes = (JSONRenderer, )
 	
 	def get_queryset(self):
 		queryset = Contracts.objects.all()
@@ -170,6 +174,8 @@ class ContractsList(generics.ListAPIView):
 		return response
 
 class EntityList(views.APIView):
+	renderer_classes = (JSONRenderer, )
+
 	def get(self, request, format=None):
 		queryset = db.entity.find()
 		for i in self.request.GET:
@@ -186,6 +192,8 @@ class EntityList(views.APIView):
 		return Response(inserted)
 
 class StatusList(views.APIView):
+	renderer_classes = (JSONRenderer, )
+
 	def get(self, request, format=None):
 		queryset = db.status.find()
 		for i in self.request.GET:
@@ -198,6 +206,8 @@ class StatusList(views.APIView):
 		return Response(inserted)
 
 class ProcurementTypeList(views.APIView):
+	renderer_classes = (JSONRenderer, )
+	
 	def get(self, request, format=None):
 		queryset = db.procurement_type.find()
 		for i in self.request.GET:

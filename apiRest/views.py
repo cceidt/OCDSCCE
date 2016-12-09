@@ -16,10 +16,12 @@ from bson.json_util import dumps
 from bson import json_util 
 from rest_framework_csv import renderers as r
 import re
+from rest_framework.renderers import JSONRenderer
 
 
 class ReleasesList(generics.ListAPIView):
 	serializer_class = ReleasesSerializer
+	renderer_classes = (JSONRenderer, )
 
 	def get_queryset(self):
 		queryset = Releases.objects.all()
@@ -97,6 +99,7 @@ class ReleasesList(generics.ListAPIView):
 
 class PackageView(generics.ListAPIView):
 	serializer_class = ReleasesSerializer
+	renderer_classes = (JSONRenderer, )
 
 	def get_queryset(self):
 		if 'ocid' in self.request.GET:
