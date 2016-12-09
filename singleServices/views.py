@@ -75,7 +75,7 @@ class PlanningList(generics.ListAPIView):
 				"uri": "http://datos.colombiacompra.gov.co/"
 				}
 		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
-		response = super(TenderList, self).list(request, args, kwargs)
+		response = super(PlanningList, self).list(request, args, kwargs)
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = publicationPolicy
 		response.data['license'] = '?'
