@@ -3,7 +3,7 @@ import os
 from apiRest.models import *
 from apiRest.serializers import *
 from rest_framework_mongoengine import generics
-from rest_framework import filters, views
+from rest_framework import filters, views, status
 from datetime import datetime
 from rest_framework.exceptions import NotFound
 import socket
@@ -17,9 +17,9 @@ from bson import json_util
 from rest_framework_csv import renderers as r
 import re
 
+
 class ReleasesList(generics.ListAPIView):
 	serializer_class = ReleasesSerializer
-	#queryset = Releases.objects.all()
 
 	def get_queryset(self):
 		queryset = Releases.objects.all()
@@ -99,7 +99,10 @@ class PackageView(generics.ListAPIView):
 	serializer_class = ReleasesSerializer
 
 	def get_queryset(self):
-		return Releases.objects.filter(ocid=self.request.GET.get('ocid'))
+		if 'ocid' in self.request.GET:
+			return Releases.objects.filter(ocid=self.request.GET.get('ocid'))
+		else:
+			return Response({"Response": "Por favor ingrese el parámetro ocid / Please enter ocid parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
 	def get(self, request, *args, **kwargs):
 		publisher = {
@@ -107,16 +110,12 @@ class PackageView(generics.ListAPIView):
 				"uri": "http://datos.colombiacompra.gov.co/"
 				}
 		response = super(PackageView, self).list(request, args, kwargs)
-		release = Releases.objects.get(ocid=self.request.GET.get('ocid'))
-		publishedDate = release.publishedDate
-		uri = release.uri
-		print publishedDate
-		response.data['publishedDate'] = publishedDate.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-		response.data['uri'] = uri
+		response.data['publishedDate'] = response.data['results'][0]['publishedDate']
+		response.data['uri'] = response.data['results'][0]['uri']
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = 'http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos'
 		response.data['license'] = 'http://www.colombiacompra.gov.co/'
-		response.data['releases'] = response.data['results']
+		response.data['releases'] = response.data['results'][0]
 		del response.data['results']
 		del response.data['count']
 		del response.data['next']
