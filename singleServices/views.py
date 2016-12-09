@@ -9,7 +9,7 @@ import pymongo
 # MongoDB conection
 connection = pymongo.MongoClient("mongodb://cceproocds020.compute-a18530.oraclecloud.internal:5017")
 # DB conection Mongo
-db = connection.opendata2
+db = connection.opendata
 
 class TenderList(generics.ListAPIView):
 	serializer_class = TenderSerializer
@@ -181,6 +181,7 @@ class EntityList(views.APIView):
 				queryset = db.entity.find({'_id.nit': {'$regex': nit} })
 		inserted = []
 		for doc in queryset:
+			print doc
 			inserted.append(doc)
 		return Response(inserted)
 
