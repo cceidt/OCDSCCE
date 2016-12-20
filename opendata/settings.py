@@ -46,7 +46,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.cache.FetchFromCacheMiddleware', 
 )
 
-CORS_URLS_REGEX = r'^/.*$'
+CORS_URLS_REGEX = r'^.*$'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = (
