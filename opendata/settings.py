@@ -11,9 +11,9 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 SECRET_KEY = 'q6ko0ce8h+v3m45gqp-gz2%8(tw8rqi9mglkceqy^wd+fd!x63'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['192.168.79.144', 'datos.colombiacompra.gov.co', '192.168.75.11', 'colombiacompra.gov.co',]
 
 
 # Application definition
@@ -46,7 +46,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.cache.FetchFromCacheMiddleware', 
 )
 
-CORS_URLS_REGEX = r'^/apirest/.*$'
+CORS_URLS_REGEX = r'^.*$'
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_METHODS = (
@@ -74,9 +74,11 @@ TEMPLATES = [
 #Administracion de permisos para la ejecucion de peticiones a rest_framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.AllowAny',),
+    'DATETIME_FORMAT': '%Y-%m-%dT%H:%M:%S.%fZ',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.BasicAuthentication',
     ),
+    'UNICODE_JSON':False,
     'PAGINATE_BY': 10
 }
 
@@ -100,7 +102,7 @@ from pymongo import read_preferences
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 from mongoengine import connect
-connect(db='opendataocid', alias='default', host='cceproocds020.compute-a18530.oraclecloud.internal', port=5017,read_preference=read_preferences.ReadPreference.PRIMARY)
+connect(db='opendata', alias='default', host='localhost', port=5017, read_preference=read_preferences.ReadPreference.PRIMARY)
 
 
 
@@ -116,7 +118,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

@@ -3,9 +3,8 @@ import os
 from apiRest.models import *
 from apiRest.serializers import *
 from rest_framework_mongoengine import generics
-from rest_framework import filters, views
+from rest_framework import filters, views, status
 from datetime import datetime
-import logging
 from rest_framework.exceptions import NotFound
 import socket
 from django.db.models import Count
@@ -17,236 +16,111 @@ from bson.json_util import dumps
 from bson import json_util 
 from rest_framework_csv import renderers as r
 import re
-
-# MongoDB conection
-connection = pymongo.MongoClient("mongodb://cceproocds020.compute-a18530.oraclecloud.internal:5017")
-# DB conection Mongo
-db = connection.opendataocid
+from rest_framework.renderers import JSONRenderer
 
 
-
-#Log var start
-log = logging.getLogger(__name__)
-
-class PackageList(generics.ListAPIView):
-	#Serializador usado por la clase importado de apiRest.serializers
-	serializer_class = PackagemetadataSerializer
+class ReleasesList(generics.ListAPIView):
+	serializer_class = ReleasesSerializer
+	renderer_classes = (JSONRenderer, )
 
 	def get_queryset(self):
-		queryset = Packagemetadata.objects.all()
-		a = ['num_constancia','name','identifier', 'tag', 'start', 'finish','status','title', 'items', 'valueDown', 'valueUp', 'id_award', 'id_contract', 'page', 'procurement_type']
-		filtro = Packagemetadata.objects.all().order_by('-publishedDate')
+		queryset = Releases.objects.all()
 		for i in self.request.GET:
-			if i in a:
-				if i == 'num_constancia':
-					num_constancia = self.request.GET.get('num_constancia')
-					filtro =  filtro.filter(num_constancia=num_constancia)
-					log.debug("Parametro de busqueda de Packagemetadata, num_constancia: "+ unicode(num_constancia))
-					log.debug("URL busqueda de Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
-				#Buscar por modealidad de contratacion
-				if i == 'procurement_type':
-					procurement_type = self.request.GET.get('procurement_type')
-					filtro =  filtro.filter(procurement_type=procurement_type)
-					log.debug("Parametro de busqueda de Packagemetadata, procurement_type: "+ unicode(procurement_type))
-					log.debug("URL busqueda de Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
-				#Buscar por nombe de entidad	
-				if i == 'name':
-					name = self.request.GET.get('name')
-					filtro = filtro.filter(releases__buyer__identifier__legalName__contains=name)
-					log.debug("Parametro de busqueda de release, buyer-identifier-legalName: "+ unicode(name))
-				#Buscar por nit de entidad
-				if i == 'identifier':
-					identifier = self.request.GET.get('identifier')
-					filtro = filtro.filter(releases__buyer__identifier__id_ident__contains=identifier)
-					log.debug("Parametro de busqueda de release, buyer-identifier-id_ident: "+ unicode(identifier))
-				#Buscar por tag de release
-				if i == 'tag':
-					tag = self.request.GET.get('tag')
-					filtro = filtro.filter(releases__tag__contains=tag)
-					log.debug("Parametro de busqueda de release, tag: "+ unicode(tag))
-				#Buscar por fecha inicial
-				if i == 'start':
-					start = self.request.GET.get('start')
-					filtro = filtro.filter(releases__date__gte=start)
-					log.debug("Parametro de busqueda de release, start(fecha inicial): "+ unicode(start))
-				#Buscar por fecha final
-				if i == 'finish':
-					finish = self.request.GET.get('finish')
-					filtro = filtro.filter(releases__date__lte=finish)
-					log.debug("Parametro de busqueda de release, finish(fecha final): "+ unicode(finish))
-				#Buscar por estado de tender
-				if i == 'status':
-					statust = self.request.GET.get('status')
-					filtro = filtro.filter(releases__tender__status=statust)
-					log.debug("Parametro de busqueda de tender, status: "+ unicode(statust))
-				#Buscar por titulo de tender
-				if i == 'title':
-					title = self.request.GET.get('title')
-					filtro = filtro.filter(releases__tender__title__contains=title)
-					log.debug("Parametro de busqueda de tender, title: "+ unicode(title))
-				#Buscar por codigo UNSPSC
-				if i == 'items':
-					itemsStr = self.request.GET.get('items')
-					items = int('0' + itemsStr)
-					filtro = filtro.filter(releases__tender__items__id_item=items)
-					log.debug("Parametro de busqueda de tender, items - id_item: "+ unicode(items))
-				#Buscar por rengo de valor de tender
-				#Valor hacia arriba
-				if i == 'valueUp':
-					value = self.request.GET.get('valueUp')
-					filtro = filtro.filter(releases__tender__value__amount__gte=value)
-					log.debug("Parametro de busqueda de tender, valueUp: "+ unicode(value))	
-				#Valor hacia abajo
-				if i == 'valueDown':
-					value = self.request.GET.get('valueDown')
-					filtro = filtro.filter(releases__tender__value__amount__lte=value)
-					log.debug("Parametro de busqueda de tender, valueDown: "+ unicode(value))
-				if i == 'id_award':
-					id_award = self.request.GET.get('id_award')
-					filtro =  filtro.filter(releases__awards__id_award=id_award)
-					log.debug("Parametro de busqueda de Awards, id_award: "+ unicode(id_award))
-					log.debug("URL busqueda de Awards: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
-				if i == 'id_contract':
-					id_contract = self.request.GET.get('id_contract')
-					filtro =  filtro.filter(releases__contracts__id_contract=id_contract)
-					log.debug("Parametro de busqueda de Contracts, id_contract: "+ unicode(id_contract))
-			else:
-				log.warn('-'+ str(i)+'- parameter was not found in Packagemetadata.'+ " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
-				raise NotFound('-'+ str(i)+'- parameter was not found in Packagemetadata.')
-		log.debug("URL de busqueda Packagemetadata: "+ unicode(self.request.get_full_path()) + " Ip: " + unicode(self.request.META.get('REMOTE_ADDR')) + " HostName: " + unicode(socket.gethostname()))
-		return filtro
+			if i == 'ocid':
+				ocid = self.request.GET.get('ocid')
+				queryset =  queryset.filter(ocid=ocid)
+	 		#Buscar por modealidad de contratacion
+			if i == 'procurement_type':
+				procurement_type = self.request.GET.get('procurement_type')
+				queryset =  queryset.filter(procurement_type=procurement_type)
+	 		#Buscar por nombe de entidad	
+			if i == 'name':
+				name = self.request.GET.get('name')
+				queryset = queryset.filter(buyer__identifier__legalName__contains=name)
+	 		#Buscar por nit de entidad
+			if i == 'identifier':
+				identifier = self.request.GET.get('identifier')
+				queryset = queryset.filter(buyer__identifier__id__contains=identifier)
+	 		#Buscar por tag de release
+			if i == 'tag':
+				tag = self.request.GET.get('tag')
+				queryset = queryset.filter(tag__contains=tag)
+	 		#Buscar por fecha inicial
+			if i == 'start':
+				start = self.request.GET.get('start')
+				queryset = queryset.filter(date__gte=start)
+	 		#Buscar por fecha final
+			if i == 'finish':
+				finish = self.request.GET.get('finish')
+				queryset = queryset.filter(date__lte=finish)
+	 		#Buscar por estado de tender
+			if i == 'status':
+				status = self.request.GET.get('status')
+				queryset = queryset.filter(tender__status=status)
+	 		#Buscar por titulo de tender
+			if i == 'title':
+				title = self.request.GET.get('title')
+				queryset = queryset.filter(tender__title__contains=title)
+	 		#Buscar por codigo UNSPSC
+			if i == 'items':
+				itemsStr = self.request.GET.get('items')
+				items = int('0' + itemsStr)
+				queryset = queryset.filter(tender__items__id=items)
+	 		#Buscar por rengo de valor de tender
+	 		#Valor hacia arriba
+			if i == 'valueUp':
+				value = self.request.GET.get('valueUp')
+				queryset = queryset.filter(tender__value__amount__gte=value)
+	 		#Valor hacia abajo
+			if i == 'valueDown':
+				value = self.request.GET.get('valueDown')
+				queryset = queryset.filter(tender__value__amount__lte=value)
+			if i == 'id_award':
+				id_award = self.request.GET.get('id_award')
+				queryset =  queryset.filter(awards__id=id_award)
+			if i == 'id_contract':
+				id_contract = self.request.GET.get('id_contract')
+				queryset =  queryset.filter(contracts__id=id_contract)
+	 	return queryset
 
-class ProcurementTypeList(views.APIView):
-	def get(self, request, format=None):
-		reducer = Code("""
-			function(doc, prev) { prev.sum += 1; }
-			""")
-		queryset = db.packagemetadata.group( key = { "procurement_type" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
-		return Response(queryset)
+	def get(self, request, *args, **kwargs):
+		publisher = {
+				"name": "Colombia Compra",
+				"uri": "http://datos.colombiacompra.gov.co/"
+				}
+		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
+		response = super(ReleasesList, self).list(request, args, kwargs)
+		response.data['publisher'] = publisher 
+		response.data['publicationPolicy'] = publicationPolicy
+		response.data['license'] = '?'
+		response.data['releases'] = response.data['results']
+		del response.data['results']
+		return response
 
-class StateList(views.APIView):
-	def get(self, request, format=None):
-		reducer = Code("""
-			function(doc, prev) { prev.sum += 1; }
-			""")
-		queryset = db.packagemetadata.group( key = { "releases.0.tag.0" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
-		return Response(queryset)
+class PackageView(generics.ListAPIView):
+	serializer_class = ReleasesSerializer
+	renderer_classes = (JSONRenderer, )
 
-class EntityList(views.APIView):
-	def get(self, request, format=None):
-		reducer = Code("""
-			function(doc, prev) { prev.sum += 1; }
-			""")
-		name = self.request.GET.get('name')
-		if name:
-			regex = ".*" + name + ".*";
-			queryset = db.packagemetadata.group( key = { "publisher.identifier.legalName" : 1 }, condition={ "publisher.identifier.legalName" : re.compile(regex, re.IGNORECASE) } ,initial= {"sum":0}, reduce=reducer )
+	def get_queryset(self):
+		if 'ocid' in self.request.GET:
+			return Releases.objects.filter(ocid=self.request.GET.get('ocid'))
 		else:
-			queryset = db.packagemetadata.group( key = { "publisher.identifier.legalName" : 1 }, condition={} ,initial= {"sum":0}, reduce=reducer )
-		return Response(queryset)
+			return Response({"Response": "Por favor ingrese el parámetro ocid / Please enter ocid parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
-class TenderList(generics.ListAPIView):
-	serializer_class = TenderPackageSerializer
-	queryset = Packagemetadata.objects.all()
-
-	
-class ContractList(generics.ListAPIView):
-	serializer_class = TenderPackageSerializer
-
-	def get_queryset(self):
-		#queryset = db.packagemetadata.find({},{'releases.tender': 1})
-		queryset = Packagemetadata.objects.only('releases.contracts')
-		for i in self.request.GET:
-			#Buscar por estado de tender
-			if i == 'status':
-				status = self.request.GET.get('status')
-				queryset = queryset.filter(releases__contracts__status=status)
-			#Buscar por titulo de tender
-			if i == 'title':
-				title = self.request.GET.get('title')
-				queryset = queryset.filter(releases__contracts__title__contains=title)
-			#Buscar por codigo UNSPSC
-			if i == 'items':
-				itemsStr = self.request.GET.get('items')
-				items = int('0' + itemsStr)
-				queryset = queryset.filter(releases__contracts__items__id_item=items)
-			#Buscar por rengo de valor de tender
-			#Valor hacia arriba
-			if i == 'valueUp':
-				value = self.request.GET.get('valueUp')
-				queryset = queryset.filter(releases__contracts__value__amount__gte=value)
-			#Valor hacia abajo
-			if i == 'valueDown':
-				value = self.request.GET.get('valueDown')
-				queryset = queryset.filter(releases__contracts__value__amount__lte=value)
-		return queryset
-
-class AwardList(generics.ListAPIView):
-	serializer_class = TenderPackageSerializer
-
-	def get_queryset(self):
-		#queryset = db.packagemetadata.find({},{'releases.tender': 1})
-		queryset = Packagemetadata.objects.only('releases.awards')
-		for i in self.request.GET:
-			#Buscar por estado de tender
-			if i == 'status':
-				status = self.request.GET.get('status')
-				queryset = queryset.filter(releases__awards__status=status)
-			#Buscar por titulo de tender
-			if i == 'title':
-				title = self.request.GET.get('title')
-				queryset = queryset.filter(releases__awards__title__contains=title)
-			#Buscar por codigo UNSPSC
-			if i == 'items':
-				itemsStr = self.request.GET.get('items')
-				items = int('0' + itemsStr)
-				queryset = queryset.filter(releases__awards__items__id_item=items)
-			#Buscar por rengo de valor de tender
-			#Valor hacia arriba
-			if i == 'valueUp':
-				value = self.request.GET.get('valueUp')
-				queryset = queryset.filter(releases__awards__value__amount__gte=value)
-			#Valor hacia abajo
-			if i == 'valueDown':
-				value = self.request.GET.get('valueDown')
-				queryset = queryset.filter(releases__awards__value__amount__lte=value)
-		return queryset
-
-class EntitadList(views.APIView):
-	def get(self, request, format=None):
-		queryset = db.entity.find()
-		for i in self.request.GET:
-			if i == 'name':
-				name = self.request.GET.get('name')
-				queryset = db.entity.find({'_id.name': {'$regex': name, '$options': '-ii' } })
-			if i == 'nit':
-				nit = self.request.GET.get('nit')
-				queryset = db.entity.find({'_id.nit': {'$regex': nit} })
-		inserted = []
-		for doc in queryset:
-			inserted.append(doc)
-		return Response(inserted)
-
-class EstadosList(views.APIView):
-	def get(self, request, format=None):
-		queryset = db.status.find()
-		for i in self.request.GET:
-			if i == 'name':
-				name = self.request.GET.get('name')
-				queryset = db.status.find({'_id.name': {'$regex': name, '$options': '-ii' } })
-		inserted = []
-		for doc in queryset:
-			inserted.append(doc)
-		return Response(inserted)
-
-class TipoContratoList(views.APIView):
-	def get(self, request, format=None):
-		queryset = db.procurement_type.find()
-		for i in self.request.GET:
-			if i == 'name':
-				name = self.request.GET.get('name')
-				queryset = db.procurement_type.find({'_id.name': {'$regex': name, '$options': '-ii' } })
-		inserted = []
-		for doc in queryset:
-			inserted.append(doc)
-		return Response(inserted)
+	def get(self, request, *args, **kwargs):
+		publisher = {
+				"name": "Colombia Compra",
+				"uri": "http://datos.colombiacompra.gov.co/"
+				}
+		response = super(PackageView, self).list(request, args, kwargs)
+		response.data['publishedDate'] = response.data['results'][0]['publishedDate']
+		response.data['uri'] = response.data['results'][0]['uri']
+		response.data['publisher'] = publisher 
+		response.data['publicationPolicy'] = 'http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos'
+		response.data['license'] = 'http://www.colombiacompra.gov.co/'
+		response.data['releases'] = response.data['results'][0]
+		del response.data['results']
+		del response.data['count']
+		del response.data['next']
+		del response.data['previous']
+		return response

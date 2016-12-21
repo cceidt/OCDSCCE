@@ -6,7 +6,8 @@ from django.conf.urls import include
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^apirest/', include('apiRest.urls', namespace="apirest")),
+    url(r'^', include('apiRest.urls', namespace="apirest")),
+    url(r'^', include('singleServices.urls', namespace="single")),
 ]
 
 urlpatterns += [
