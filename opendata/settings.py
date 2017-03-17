@@ -13,7 +13,7 @@ SECRET_KEY = 'q6ko0ce8h+v3m45gqp-gz2%8(tw8rqi9mglkceqy^wd+fd!x63'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.79.144', 'datos.colombiacompra.gov.co', '192.168.75.11', 'colombiacompra.gov.co',]
+ALLOWED_HOSTS = ['192.168.79.144', 'datos.colombiacompra.gov.co', '192.168.75.11', 'colombiacompra.gov.co', '129.144.52.172']
 
 
 # Application definition
@@ -102,7 +102,7 @@ from pymongo import read_preferences
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 from mongoengine import connect
-connect(db='opendata', alias='default', host='cceproocds020.compute-a18530.oraclecloud.internal', port=5017, read_preference=read_preferences.ReadPreference.PRIMARY)
+connect(db='opendata', alias='default', host='localhost', port=5017, read_preference=read_preferences.ReadPreference.PRIMARY)
 
 
 
