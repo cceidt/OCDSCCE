@@ -13,7 +13,7 @@ SECRET_KEY = 'q6ko0ce8h+v3m45gqp-gz2%8(tw8rqi9mglkceqy^wd+fd!x63'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['192.168.79.144', 'datos.colombiacompra.gov.co', '192.168.75.11', 'colombiacompra.gov.co', '129.144.52.172']
+ALLOWED_HOSTS = ['192.168.248.134', 'datos.colombiacompra.gov.co', '192.168.75.11', 'colombiacompra.gov.co', '129.144.52.172']
 
 
 # Application definition
@@ -129,6 +129,10 @@ STATIC_URL = '/static/'
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
 
 LOGGING = {
     'version': 1,
