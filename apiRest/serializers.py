@@ -224,7 +224,7 @@ class ContractsSerializer(DocumentSerializer):
     class Meta:
         model = Contracts
         fields = ('id', 'ocid','awardID','status','period','value','items','dateSigned','documents')
-import json
+
 class ReleasesSerializer(DocumentSerializer):
     tender = TenderSerializer()
     contracts = ContractsSerializer(many=True)
@@ -233,7 +233,6 @@ class ReleasesSerializer(DocumentSerializer):
     num_constancia = serializers.SerializerMethodField('getConstancia')
 
     def getConstancia(self, obj):
-        print obj.id
         return obj.ocid.replace("ocds-k50g02-", "")
 
     def get_uri_name(self, obj):
