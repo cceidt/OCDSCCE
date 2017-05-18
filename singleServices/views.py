@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 import pymongo
 
 # MongoDB conection
-connection = pymongo.MongoClient("mongodb://localhost:5017")
+connection = pymongo.MongoClient("mongodb://cceproocds020.compute-a18530.oraclecloud.internal:5017")
 # DB conection Mongo
 db = connection.opendata
 
@@ -21,6 +21,9 @@ class TenderList(generics.ListAPIView):
 			if i == 'ocid':
 				ocid = self.request.GET.get('ocid')
 				queryset =  queryset.filter(ocid=ocid)
+			if i == 'num_constancia':
+				num_constancia = 'ocds-k50g02-' + self.request.GET.get('num_constancia')
+				queryset =  queryset.filter(ocid=num_constancia)
 			if i == 'status':
 				status = self.request.GET.get('status')
 				queryset = queryset.filter(status=status)
@@ -48,15 +51,25 @@ class TenderList(generics.ListAPIView):
 	def get(self, request, *args, **kwargs):
 		publisher = {
 				"name": "Colombia Compra",
-				"uri": "http://datos.colombiacompra.gov.co/"
+				"uri": "https://www.colombiacompra.gov.co/"
 				}
 		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
 		response = super(TenderList, self).list(request, args, kwargs)
+		links = {
+				"count": response.data['count'],
+				"prev": response.data['previous'],
+				"next": response.data['next']
+
+		}
+		response.data['links'] = links 
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = publicationPolicy
-		response.data['license'] = '?'
-		response.data['releases'] = response.data['results']
+		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
+		response.data['tenders'] = response.data['results']
 		del response.data['results']
+		del response.data['count']
+		del response.data['previous']
+		del response.data['next']
 		return response
 
 class PlanningList(generics.ListAPIView):
@@ -69,20 +82,33 @@ class PlanningList(generics.ListAPIView):
 			if i == 'ocid':
 				ocid = self.request.GET.get('ocid')
 				queryset =  queryset.filter(ocid=ocid)
+			if i == 'num_constancia':
+				num_constancia = 'ocds-k50g02-' + self.request.GET.get('num_constancia')
+				queryset =  queryset.filter(ocid=num_constancia)
 	 	return queryset
 
 	def get(self, request, *args, **kwargs):
 		publisher = {
 				"name": "Colombia Compra",
-				"uri": "http://datos.colombiacompra.gov.co/"
+				"uri": "https://www.colombiacompra.gov.co/"
 				}
 		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
 		response = super(PlanningList, self).list(request, args, kwargs)
+		links = {
+				"count": response.data['count'],
+				"prev": response.data['previous'],
+				"next": response.data['next']
+
+		}
+		response.data['links'] = links 
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = publicationPolicy
-		response.data['license'] = '?'
-		response.data['releases'] = response.data['results']
+		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
+		response.data['plannings'] = response.data['results']
 		del response.data['results']
+		del response.data['count']
+		del response.data['previous']
+		del response.data['next']
 		return response
 
 class AwardsList(generics.ListAPIView):
@@ -95,6 +121,9 @@ class AwardsList(generics.ListAPIView):
 			if i == 'ocid':
 				ocid = self.request.GET.get('ocid')
 				queryset =  queryset.filter(ocid=ocid)
+			if i == 'num_constancia':
+				num_constancia = 'ocds-k50g02-' + self.request.GET.get('num_constancia')
+				queryset =  queryset.filter(ocid=num_constancia)
 			if i == 'id':
 				id_award = self.request.GET.get('id')
 				queryset =  queryset.filter(id=id_award)
@@ -119,15 +148,25 @@ class AwardsList(generics.ListAPIView):
 	def get(self, request, *args, **kwargs):
 		publisher = {
 				"name": "Colombia Compra",
-				"uri": "http://datos.colombiacompra.gov.co/"
+				"uri": "https://www.colombiacompra.gov.co/"
 				}
 		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
 		response = super(AwardsList, self).list(request, args, kwargs)
+		links = {
+				"count": response.data['count'],
+				"prev": response.data['previous'],
+				"next": response.data['next']
+
+		}
+		response.data['links'] = links 
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = publicationPolicy
-		response.data['license'] = '?'
-		response.data['releases'] = response.data['results']
+		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
+		response.data['awards'] = response.data['results']
 		del response.data['results']
+		del response.data['count']
+		del response.data['previous']
+		del response.data['next']
 		return response
 
 class ContractsList(generics.ListAPIView):
@@ -140,6 +179,9 @@ class ContractsList(generics.ListAPIView):
 			if i == 'ocid':
 				ocid = self.request.GET.get('ocid')
 				queryset =  queryset.filter(ocid=ocid)
+			if i == 'num_constancia':
+				num_constancia = 'ocds-k50g02-' + self.request.GET.get('num_constancia')
+				queryset =  queryset.filter(ocid=num_constancia)
 			if i == 'id':
 				id_contract = self.request.GET.get('id')
 				queryset =  queryset.filter(id=id_contract)
@@ -162,15 +204,25 @@ class ContractsList(generics.ListAPIView):
 	def get(self, request, *args, **kwargs):
 		publisher = {
 				"name": "Colombia Compra",
-				"uri": "http://datos.colombiacompra.gov.co/"
+				"uri": "https://www.colombiacompra.gov.co/"
 				}
 		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
 		response = super(ContractsList, self).list(request, args, kwargs)
+		links = {
+				"count": response.data['count'],
+				"prev": response.data['previous'],
+				"next": response.data['next']
+
+		}
+		response.data['links'] = links 
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = publicationPolicy
-		response.data['license'] = '?'
-		response.data['releases'] = response.data['results']
+		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
+		response.data['contracts'] = response.data['results']
 		del response.data['results']
+		del response.data['count']
+		del response.data['previous']
+		del response.data['next']
 		return response
 
 class EntityList(views.APIView):

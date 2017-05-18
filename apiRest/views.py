@@ -29,6 +29,9 @@ class ReleasesList(generics.ListAPIView):
 			if i == 'ocid':
 				ocid = self.request.GET.get('ocid')
 				queryset =  queryset.filter(ocid=ocid)
+			if i == 'num_constancia':
+				num_constancia = 'ocds-k50g02-' + self.request.GET.get('num_constancia')
+				queryset =  queryset.filter(ocid=num_constancia)
 	 		#Buscar por modealidad de contratacion
 			if i == 'procurement_type':
 				procurement_type = self.request.GET.get('procurement_type')
@@ -86,15 +89,27 @@ class ReleasesList(generics.ListAPIView):
 	def get(self, request, *args, **kwargs):
 		publisher = {
 				"name": "Colombia Compra",
-				"uri": "http://datos.colombiacompra.gov.co/"
+				"uri": "https://www.colombiacompra.gov.co/"
 				}
 		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
 		response = super(ReleasesList, self).list(request, args, kwargs)
+		links = {
+				"count": response.data['count'],
+				"prev": response.data['previous'],
+				"next": response.data['next']
+
+		}
+		response.data['links'] = links 
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = publicationPolicy
-		response.data['license'] = '?'
+		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
 		response.data['releases'] = response.data['results']
+		response.data['releases'][0]['date'] = response.data['releases'][0]['publishedDate']
 		del response.data['results']
+		del response.data['count']
+		del response.data['previous']
+		del response.data['next']
+		del response.data['releases'][0]['publishedDate']
 		return response
 
 class PackageView(generics.ListAPIView):
@@ -110,14 +125,14 @@ class PackageView(generics.ListAPIView):
 	def get(self, request, *args, **kwargs):
 		publisher = {
 				"name": "Colombia Compra",
-				"uri": "http://datos.colombiacompra.gov.co/"
+				"uri": "https://www.colombiacompra.gov.co/"
 				}
 		response = super(PackageView, self).list(request, args, kwargs)
 		response.data['publishedDate'] = response.data['results'][0]['publishedDate']
 		response.data['uri'] = response.data['results'][0]['uri']
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = 'http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos'
-		response.data['license'] = 'http://www.colombiacompra.gov.co/'
+		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
 		response.data['releases'] = response.data['results'][0]
 		del response.data['results']
 		del response.data['count']

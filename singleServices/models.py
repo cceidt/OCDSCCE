@@ -15,7 +15,7 @@ class Tender(Document):
      value = EmbeddedDocumentField(Value)
      status = StringField(max_length=50)
      items = ListField(EmbeddedDocumentField(Item))
-     submissionMethod = StringField(max_length=50)
+     submissionMethod = ListField(StringField(max_length=50))
      tenderPeriod = EmbeddedDocumentField(Period)
      documents = ListField(EmbeddedDocumentField(Documents))
      information_system = StringField(max_length=50)
