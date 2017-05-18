@@ -129,11 +129,10 @@ class PackageView(generics.ListAPIView):
 				}
 		response = super(PackageView, self).list(request, args, kwargs)
 		response.data['publishedDate'] = response.data['results'][0]['publishedDate']
-		response.data['uri'] = response.data['results'][0]['uri']
 		response.data['publisher'] = publisher 
 		response.data['publicationPolicy'] = 'http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos'
 		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
-		response.data['releases'] = response.data['results'][0]
+		response.data['releases'] = [response.data['results'][0],]
 		del response.data['results']
 		del response.data['count']
 		del response.data['next']
