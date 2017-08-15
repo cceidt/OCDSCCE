@@ -236,7 +236,7 @@ class ReleasesSerializer(DocumentSerializer):
         return obj.ocid.replace("ocds-k50g02-", "")
 
     def get_uri_name(self, obj):
-        return obj.uri
+        return obj.urlSecopi
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()

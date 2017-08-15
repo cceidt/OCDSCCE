@@ -92,6 +92,7 @@ class ReleasesList(generics.ListAPIView):
 				"uri": "https://www.colombiacompra.gov.co/"
 				}
 		publicationPolicy =  "http://www.colombiacompra.gov.co/transparencia/gestion-documental/datos-abiertos"
+		#print request
 		response = super(ReleasesList, self).list(request, args, kwargs)
 		links = {
 				"count": response.data['count'],
@@ -104,12 +105,11 @@ class ReleasesList(generics.ListAPIView):
 		response.data['publicationPolicy'] = publicationPolicy
 		response.data['license'] = 'https://creativecommons.org/licenses/by-sa/2.5/co/legalcode'
 		response.data['releases'] = response.data['results']
-		response.data['releases'][0]['date'] = response.data['releases'][0]['publishedDate']
+		#response.data['releases'][0]['date'] = response.data['releases'][0]['publishedDate']
 		del response.data['results']
 		del response.data['count']
 		del response.data['previous']
 		del response.data['next']
-		del response.data['releases'][0]['publishedDate']
 		return response
 
 class PackageView(generics.ListAPIView):

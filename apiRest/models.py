@@ -29,6 +29,8 @@ class Item(EmbeddedDocument):
      id = StringField(max_length=50)
      description = StringField(max_length=50)
      classification = EmbeddedDocumentField(Classification)
+     unit = EmbeddedDocumentField(Unit)
+     quantity = StringField(max_length=50)
 
 """Clase Identifier"""
 class Identifier(EmbeddedDocument):
@@ -150,7 +152,7 @@ class Contracts(EmbeddedDocument):
 class Releases(Document):
     ocid = StringField(max_length=50)
     id = StringField(max_length=50)
-    uri = URLField()
+    urlSecopi = URLField()
     publishedDate = DateTimeField()
     language = StringField(max_length=50)
     initiationType = StringField(max_length=50)
