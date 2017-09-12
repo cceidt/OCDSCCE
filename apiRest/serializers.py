@@ -119,6 +119,7 @@ class DocumentsSerializer(EmbeddedDocumentSerializer):
 class TenderSerializer(EmbeddedDocumentSerializer):
     tenderPeriod = PeriodSerializer()
     documents = DocumentsSerializer(many=True)
+    
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
@@ -228,6 +229,14 @@ class ReleasesSerializer(DocumentSerializer):
     tender = TenderSerializer()
     contracts = ContractsSerializer(many=True)
     awards = AwardsSerializer(many=True)
+    urlSECOP = serializers.SerializerMethodField('get_uri_name')
+    num_constancia = serializers.SerializerMethodField('getConstancia')
+
+    def getConstancia(self, obj):
+        return obj.ocid.replace("ocds-k50g02-", "")
+
+    def get_uri_name(self, obj):
+        return obj.urlSecopi
 
     def _include_additional_options(self, *args, **kwargs):
         return self.get_extra_kwargs()
@@ -259,7 +268,7 @@ class ReleasesSerializer(DocumentSerializer):
 
     class Meta:
         model = Releases
-        fields = ('id','ocid','uri', 'publishedDate','language', 'initiationType', 'planning','tender', 'tag', 'awards', 'contracts', 'date', 'buyer', 'procurement_type')
+        fields = ('id','num_constancia','ocid','urlSECOP', 'publishedDate','language', 'initiationType', 'planning','tender', 'tag', 'awards', 'contracts', 'date', 'buyer', 'procurement_type')
 
 class PlanningSerializer(DocumentSerializer):
     documents = DocumentsSerializer(many=True)
