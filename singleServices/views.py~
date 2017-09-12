@@ -7,7 +7,7 @@ from rest_framework.renderers import JSONRenderer
 import pymongo
 
 # MongoDB conection
-connection = pymongo.MongoClient("mongodb://localhost:5017")
+connection = pymongo.MongoClient("mongodb://localhost:27017")
 # DB conection Mongo
 db = connection.opendata
 

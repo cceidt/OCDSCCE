@@ -106,7 +106,7 @@ from pymongo import read_preferences
 SESSION_ENGINE = 'mongoengine.django.sessions'
 SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
 from mongoengine import connect
-connect(db='prueba', alias='default', host='localhost', port=27017, read_preference=read_preferences.ReadPreference.PRIMARY)
+connect(db='prueba', alias='default', host='localhost', port=5017, read_preference=read_preferences.ReadPreference.PRIMARY)
 
 
 
